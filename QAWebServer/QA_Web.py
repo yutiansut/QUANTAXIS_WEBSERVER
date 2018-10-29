@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 import os
-
+import sys
 import tornado
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.options import define, parse_command_line, parse_config_file, options
@@ -46,7 +46,33 @@ from QAWebServer.jobhandler import JOBHandler
 
 class INDEX(QABaseHandler):
     def get(self):
-        self.finish('.{}{}'.format(os.sep, "index.html"))
+        self.write({'url': [item[0] for item in handlers]})
+
+
+handlers = [
+    (r"/", INDEX),
+    (r"/marketdata/stock/day", StockdayHandler),
+    (r"/marketdata/stock/min", StockminHandler),
+    (r"/marketdata/stock/block", StockBlockHandler),
+    (r"/marketdata/stock/price", StockPriceHandler),
+    (r"/marketdata/stock/code", StockCodeHandler),
+    (r"/user/signin", SigninHandler),
+    (r"/user/signup", SignupHandler),
+    (r"/user/blocksetting", PersonBlockHandler),
+    (r"/strategy/content", StrategyHandler),
+    (r"/backtest/content", BacktestHandler),
+    (r"/trade", AccModelHandler),
+    (r"/tradeinfo", TradeInfoHandler),
+    (r"/realtime", RealtimeSocketHandler),
+    (r"/simulate", SimulateSocketHandler),
+    (r"/monitor", MonitorSocketHandler),
+    (r"/accounts", AccountHandler),
+    (r"/accounts/all", MemberHandler),
+    (r"/risk", RiskHandler),
+    (r"/command/run", CommandHandler),
+    (r"/command/runbacktest", RunnerHandler),
+    (r"/command/jobmapper", JOBHandler)
+]
 
 
 def main():
@@ -55,30 +81,7 @@ def main():
     define("content", default=[], type=str, multiple=True, help="控制台输出内容")
     parse_command_line()
     apps = Application(
-        handlers=[
-            (r"/", INDEX),
-            (r"/marketdata/stock/day", StockdayHandler),
-            (r"/marketdata/stock/min", StockminHandler),
-            (r"/marketdata/stock/block", StockBlockHandler),
-            (r"/marketdata/stock/price", StockPriceHandler),
-            (r"/marketdata/stock/code", StockCodeHandler),
-            (r"/user/signin", SigninHandler),
-            (r"/user/signup", SignupHandler),
-            (r"/user/blocksetting", PersonBlockHandler),
-            (r"/strategy/content", StrategyHandler),
-            (r"/backtest/content", BacktestHandler),
-            (r"/trade", AccModelHandler),
-            (r"/tradeinfo", TradeInfoHandler),
-            (r"/realtime", RealtimeSocketHandler),
-            (r"/simulate", SimulateSocketHandler),
-            (r"/monitor", MonitorSocketHandler),
-            (r"/accounts", AccountHandler),
-            (r"/accounts/all", MemberHandler),
-            (r"/risk", RiskHandler),
-            (r"/command/run", CommandHandler),
-            (r"/command/runbacktest", RunnerHandler),
-            (r"/command/jobmapper", JOBHandler)
-        ],
+        handlers=handlers,
         debug=True
     )
     # print(options.content)

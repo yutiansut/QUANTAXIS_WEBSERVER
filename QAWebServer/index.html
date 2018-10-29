@@ -34,6 +34,30 @@
         <button onclick="send()">send</button>
     </div>
 
+    <div>
+        (r"/marketdata/stock/day", StockdayHandler),
+        (r"/marketdata/stock/min", StockminHandler),
+        (r"/marketdata/stock/block", StockBlockHandler),
+        (r"/marketdata/stock/price", StockPriceHandler),
+        (r"/marketdata/stock/code", StockCodeHandler),
+        (r"/user/signin", SigninHandler),
+        (r"/user/signup", SignupHandler),
+        (r"/user/blocksetting", PersonBlockHandler),
+        (r"/strategy/content", StrategyHandler),
+        (r"/backtest/content", BacktestHandler),
+        (r"/trade", AccModelHandler),
+        (r"/tradeinfo", TradeInfoHandler),
+        (r"/realtime", RealtimeSocketHandler),
+        (r"/simulate", SimulateSocketHandler),
+        (r"/monitor", MonitorSocketHandler),
+        (r"/accounts", AccountHandler),
+        (r"/accounts/all", MemberHandler),
+        (r"/risk", RiskHandler),
+        (r"/command/run", CommandHandler),
+        (r"/command/runbacktest", RunnerHandler),
+        (r"/command/jobmapper", JOBHandler)
+    </div>
+
 </body>
 
 </html>
