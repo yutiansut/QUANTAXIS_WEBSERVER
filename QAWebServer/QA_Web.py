@@ -25,29 +25,35 @@ import os
 
 import tornado
 from tornado.web import Application, RequestHandler, authenticated
-
+from tornado.options import define, parse_command_line, parse_config_file, options
 from QAWebServer.arphandles import (AccountHandler, MemberHandler,
-                                        RiskHandler)
+                                    RiskHandler)
 from QAWebServer.basehandles import QABaseHandler
 from QAWebServer.commandhandler import CommandHandler, RunnerHandler
 from QAWebServer.datahandles import (StockBlockHandler, StockCodeHandler,
-                                         StockdayHandler, StockminHandler,
-                                         StockPriceHandler)
+                                     StockdayHandler, StockminHandler,
+                                     StockPriceHandler)
 from QAWebServer.quotationhandles import (MonitorSocketHandler,
-                                              RealtimeSocketHandler,
-                                              SimulateSocketHandler)
+                                          RealtimeSocketHandler,
+                                          SimulateSocketHandler)
 from QAWebServer.strategyhandlers import BacktestHandler, StrategyHandler
 from QAWebServer.tradehandles import AccModelHandler, TradeInfoHandler
 from QAWebServer.userhandles import (PersonBlockHandler, SigninHandler,
-                                         SignupHandler)
+                                     SignupHandler)
 
 from QAWebServer.jobhandler import JOBHandler
+
+
 class INDEX(QABaseHandler):
     def get(self):
         self.finish('.{}{}'.format(os.sep, "index.html"))
 
 
 def main():
+    define("port", default=8000, type=int, help="服务器监听端口号")
+    define("address", default='0.0.0.0', type=str, help='服务器地址')
+    define("content", default=[], type=str, multiple=True, help="控制台输出内容")
+    parse_command_line()
     apps = Application(
         handlers=[
             (r"/", INDEX),
@@ -71,12 +77,13 @@ def main():
             (r"/risk", RiskHandler),
             (r"/command/run", CommandHandler),
             (r"/command/runbacktest", RunnerHandler),
-            (r"/command/jobmapper",JOBHandler)
+            (r"/command/jobmapper", JOBHandler)
         ],
         debug=True
     )
+    # print(options.content)
     http_server = tornado.httpserver.HTTPServer(apps)
-    http_server.bind(8010, address='0.0.0.0')
+    http_server.bind(options.port, address=options.address)
     """增加了对于非windows下的机器多进程的支持
     """
     http_server.start(1)
