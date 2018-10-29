@@ -38,7 +38,8 @@ from tornado.web import RequestHandler
 from tornado.websocket import WebSocketHandler
 
 from QAWebServer.util import (APPLICATION_JSON, APPLICATION_XML, TEXT_XML,
-                                  convert)
+                              convert)
+
 
 """
 基础类
