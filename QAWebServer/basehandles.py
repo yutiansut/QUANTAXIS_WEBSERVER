@@ -60,7 +60,8 @@ class QABaseHandler(RequestHandler):
         #self.set_header("Access-Control-Allow-Headers", "x-requested-with")
         self.set_header('Access-Control-Allow-Methods',
                         'POST, GET, OPTIONS, DELETE, PUT, PATCH')
-        self.set_header('Access-Control-Allow-Headers', '*')
+        self.set_header('Access-Control-Allow-Headers',
+                        "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,HTTP2-Settings")
         self.set_header(
             'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
         self.set_header('Server', 'QUANTAXISBACKEND')
@@ -99,7 +100,8 @@ class QAWebSocketHandler(WebSocketHandler):
                         'POST, GET, OPTIONS, DELETE, PUT, PATCH')
         self.set_header('Access-Control-Max-Age',
                         999999999999999999999999999999999)
-        self.set_header('Access-Control-Allow-Headers', '*')
+        self.set_header('Access-Control-Allow-Headers',
+                        "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,HTTP2-Settings")
         self.set_header('Server', 'QUANTAXISBACKEND')
 
     def open(self):

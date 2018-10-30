@@ -24,6 +24,7 @@
 import os
 import sys
 import tornado
+
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.options import define, parse_command_line, parse_config_file, options
 from QAWebServer.arphandles import (AccountHandler, MemberHandler,
@@ -42,7 +43,7 @@ from QAWebServer.userhandles import (PersonBlockHandler, SigninHandler,
                                      SignupHandler)
 
 from QAWebServer.jobhandler import JOBHandler
-
+from tornado_http2.server import Server
 
 class INDEX(QABaseHandler):
     def get(self):
@@ -85,7 +86,8 @@ def main():
         debug=True
     )
     # print(options.content)
-    http_server = tornado.httpserver.HTTPServer(apps)
+    #http_server = tornado.httpserver.HTTPServer(apps)
+    http_server = Server(apps)
     http_server.bind(options.port, address=options.address)
     """增加了对于非windows下的机器多进程的支持
     """
