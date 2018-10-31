@@ -12,3 +12,7 @@ api参见: [backend_api](./backendapi.md)
 - 1.1 
 
     - 增加http2支持
+    - [] 增加tls, ssl支持
+
+    - 一个完备的websocket通讯/交易机制
+    - 

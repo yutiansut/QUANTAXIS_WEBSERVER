@@ -104,7 +104,7 @@ class AccModelHandler(QAWebSocketHandler):
 
     def on_message(self, message):
         try:
-            message = message.split('_')
+            message = message.split('$')
             self.write_message({'input_param': message})
             if message[0] == 'create':
                 if message[1] == 'account':
@@ -118,6 +118,8 @@ class AccModelHandler(QAWebSocketHandler):
                         {'result': list(self.port.accounts.keys())})
                 elif message[1] == 'history':
                     self.write_message({'result': self.account.history})
+            elif message[0] == 'login':
+                self.account=message[1]
             elif message[0] == 'trade':
                 """code/price/amount/towards/time
                 """
