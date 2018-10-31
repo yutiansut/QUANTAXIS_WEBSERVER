@@ -44,6 +44,8 @@ from QAWebServer.userhandles import (PersonBlockHandler, SigninHandler,
 
 from QAWebServer.jobhandler import JOBHandler
 from tornado_http2.server import Server
+from QUANTAXIS.QAUtil.QASetting import QASETTING
+
 
 class INDEX(QABaseHandler):
     def get(self):
@@ -77,7 +79,9 @@ handlers = [
 
 
 def main():
-    define("port", default=8000, type=int, help="服务器监听端口号")
+
+    define("port", default=8010, type=int, help="服务器监听端口号")
+
     define("address", default='0.0.0.0', type=str, help='服务器地址')
     define("content", default=[], type=str, multiple=True, help="控制台输出内容")
     parse_command_line()
@@ -85,10 +89,24 @@ def main():
         handlers=handlers,
         debug=True
     )
+
+    try:
+        port = QASETTING.get_config(
+            'WEBSERVICE', 'port', default_value=options.port)
+        if port == options.port:
+            QASETTING.set_config('WEBSERVICE', 'port',
+                                 default_value=options.port)
+        else:
+            options.port = port
+    except:
+        QASETTING.set_config('WEBSERVICE', 'port',
+                                default_value=options.port)
+
     # print(options.content)
     #http_server = tornado.httpserver.HTTPServer(apps)
     http_server = Server(apps)
-    http_server.bind(options.port, address=options.address)
+    print(port)
+    http_server.bind(port, address=options.address)
     """增加了对于非windows下的机器多进程的支持
     """
     http_server.start(1)
