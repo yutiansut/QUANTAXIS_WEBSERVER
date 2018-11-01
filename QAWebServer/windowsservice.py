@@ -28,10 +28,10 @@ class QUANTAXIS_WebService(win32serviceutil.ServiceFramework):
 
         logger = logging.getLogger('[QUANTAXIS_WebService]')
 
-        this_file = inspect.getfile(inspect.currentframe())
+        #this_file = inspect.getfile(inspect.currentframe())
         # dirpath = os.path.abspath(os.path.dirname(this_file))
-        handler = logging.FileHandler(os.path.join(
-            log_path, "QUANTAXIS_WebService.log"))
+        handler = logging.FileHandler('{}{}{}'.format(
+            log_path, os.sep, "QUANTAXIS_WebService.log"))
 
         formatter = logging.Formatter(
             '%(asctime)s %(name)-12s %(levelname)-8s %(message)s')

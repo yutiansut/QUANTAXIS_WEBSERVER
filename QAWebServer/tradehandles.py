@@ -110,7 +110,7 @@ class TradeInfoHandler(QABaseHandler):
 
 class AccModelHandler(QAWebSocketHandler):
     port = QA_Portfolio()
-
+    broker = ['haitong', 'ths_moni', 'tdx_moni', 'quantaxis_backtest', 'ctp', 'ctp_min']
     def open(self):
         self.write_message('QUANTAXIS BACKEND: realtime socket start')
 
@@ -131,7 +131,20 @@ class AccModelHandler(QAWebSocketHandler):
                 elif message[1] == 'history':
                     self.write_message({'result': self.account.history})
             elif message[0] == 'login':
-                self.account=message[1]
+                """
+                login$account$broker$password$tpassword$serverip
+
+                
+                """
+
+                account, broker , password, tpassword, serverip = message[1], message[2], message[3], message[4], message[5]
+                
+                if broker == 'quantaxis_backtest':
+                    self.account =  self.port.new_account(account_cookie=account)
+                    self.write_message({'topic':'login', 
+                                        'status': 200,
+                                        'account_cookie': self.account.account_cookie})
+
             elif message[0] == 'trade':
                 """code/price/amount/towards/time
                 """
