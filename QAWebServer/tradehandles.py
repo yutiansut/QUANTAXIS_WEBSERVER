@@ -43,6 +43,18 @@ GET http://localhost:8888/clients
 """
 
 
+""" 
+心跳包断线重连 ( EXAMPLE 拔网线等直接导致的网络中断)
+http://www.voidcn.com/article/p-zshodvff-mm.html
+
+Returns:
+    [type] -- [description]
+"""
+
+
+
+
+
 class TradeInfoHandler(QABaseHandler):
     """trade 信息查询句柄
 

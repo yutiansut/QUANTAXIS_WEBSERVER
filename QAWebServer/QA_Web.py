@@ -49,7 +49,10 @@ from QUANTAXIS.QAUtil.QASetting import QASETTING
 
 class INDEX(QABaseHandler):
     def get(self):
-        self.write({'url': [item[0] for item in handlers]})
+        self.write({'status': 200,
+                    'message': 'This is a welcome page for quantaxis backend',
+                    'github_page': 'https://github.com/yutiansut/QUANTAXIS_WEBSERVER/blob/master/backendapi.md',
+                    'url': [item[0] for item in handlers]})
 
 
 handlers = [
@@ -87,7 +90,9 @@ def main():
     parse_command_line()
     apps = Application(
         handlers=handlers,
-        debug=True
+        debug=True,
+        autoreload=True,
+        compress_response= True
     )
 
     try:
@@ -101,7 +106,7 @@ def main():
     except:
         # #print(port)
         QASETTING.set_config('WEBSERVICE', 'port',
-                                default_value=options.port)
+                             default_value=options.port)
 
     # print(options.content)
     #http_server = tornado.httpserver.HTTPServer(apps)
