@@ -52,9 +52,6 @@ Returns:
 """
 
 
-
-
-
 class TradeInfoHandler(QABaseHandler):
     """trade 信息查询句柄
 
@@ -110,14 +107,24 @@ class TradeInfoHandler(QABaseHandler):
 
 class AccModelHandler(QAWebSocketHandler):
     port = QA_Portfolio()
-    broker = ['haitong', 'ths_moni', 'tdx_moni', 'quantaxis_backtest', 'ctp', 'ctp_min']
+    broker = ['haitong', 'ths_moni', 'tdx_moni',
+              'quantaxis_backtest', 'ctp', 'ctp_min']
+
     def open(self):
-        self.write_message('QUANTAXIS BACKEND: realtime socket start')
+        self.write_message({
+            'data': 'QUANTAXIS BACKEND: realtime socket start',
+            'topic': 'open',
+            'status': 200})
 
     def on_message(self, message):
+        """
+        返回值需要带上
+        1. topic
+        2. status
+        """
         try:
             message = message.split('$')
-            self.write_message({'input_param': message})
+            # self.write_message({'topic':'receive', 'status': 304, 'input_param': message})
             if message[0] == 'create':
                 if message[1] == 'account':
                     self.account = self.port.new_account()
@@ -130,18 +137,22 @@ class AccModelHandler(QAWebSocketHandler):
                         {'result': list(self.port.accounts.keys())})
                 elif message[1] == 'history':
                     self.write_message({'result': self.account.history})
+                elif message[1] == 'available_account':
+                    self.write_message({'status': 200,
+                                        'topic': 'query_account',
+                                        'data': list(self.port.accounts.keys())})
             elif message[0] == 'login':
                 """
                 login$account$broker$password$tpassword$serverip
-
-                
                 """
 
-                account, broker , password, tpassword, serverip = message[1], message[2], message[3], message[4], message[5]
-                
+                account, broker, password, tpassword, serverip = message[
+                    1], message[2], message[3], message[4], message[5]
+
                 if broker == 'quantaxis_backtest':
-                    self.account =  self.port.new_account(account_cookie=account)
-                    self.write_message({'topic':'login', 
+                    self.account = self.port.new_account(
+                        account_cookie=account)
+                    self.write_message({'topic': 'login',
                                         'status': 200,
                                         'account_cookie': self.account.account_cookie})
 
