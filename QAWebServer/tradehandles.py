@@ -32,6 +32,9 @@ from tornado.websocket import WebSocketHandler
 from QUANTAXIS.QAARP import QA_Account, QA_Portfolio, QA_User
 from QAWebServer.basehandles import QABaseHandler, QAWebSocketHandler
 from QUANTAXIS.QAMarket.QAShipaneBroker import QA_SPEBroker
+from QUANTAXIS.QAMarket.QABacktestBroker import QA_BacktestBroker
+from QUANTAXIS.QAUtil.QAParameter import ORDER_DIRECTION,ORDER_STATUS,ORDER_MODEL,AMOUNT_MODEL
+from QUANTAXIS.QAEngine.QAEvent import QA_Event
 from QUANTAXIS.QAUtil.QATransform import QA_util_to_json_from_pandas
 """
 GET http://localhost:8888/accounts
@@ -109,6 +112,7 @@ class AccModelHandler(QAWebSocketHandler):
     port = QA_Portfolio()
     broker = ['haitong', 'ths_moni', 'tdx_moni',
               'quantaxis_backtest', 'ctp', 'ctp_min']
+    Broker = QA_BacktestBroker()
 
     def open(self):
         self.write_message({
@@ -136,11 +140,26 @@ class AccModelHandler(QAWebSocketHandler):
                     self.write_message(
                         {'result': list(self.port.accounts.keys())})
                 elif message[1] == 'history':
-                    self.write_message({'result': self.account.history})
+                    self.write_message({
+                        'topic': 'history',
+                        'status': 200,
+                        'data': self.port.get_account_by_cookie(message[2]).history})
+                elif message[1] == 'filled_order':
+                    self.write_message({
+                        'topic': 'filled_orders',
+                        'status': 200
+                    })
                 elif message[1] == 'available_account':
                     self.write_message({'status': 200,
                                         'topic': 'query_account',
                                         'data': list(self.port.accounts.keys())})
+                elif message[1] == 'info':
+                    ac = self.port.get_account_by_cookie(message[2])
+                    self.write_message({
+                        'topic': 'account_info',
+                        'status': 200,
+                        'data': {'hold': ac.hold.to_dict(), 'cash': ac.cash_available}
+                    })
             elif message[0] == 'login':
                 """
                 login$account$broker$password$tpassword$serverip
@@ -157,11 +176,35 @@ class AccModelHandler(QAWebSocketHandler):
                                         'account_cookie': self.account.account_cookie})
 
             elif message[0] == 'trade':
-                """code/price/amount/towards/time
+                """account/code/price/amount/towards/time
+
+                先给个简易版本
                 """
-                self.account.receive_simpledeal(
-                    code=str(message[1]), trade_price=float(message[2]),
-                    trade_amount=int(message[3]), trade_towards=int(message[4]), trade_time=str(message[5]))
+                print(message)
+                ac = self.port.get_account_by_cookie(message[1])
+
+                order = ac.send_order(
+                    code=str(message[2]),
+                    time=str(message[6]),
+                    amount=int(message[4]),
+                    towards=int(message[5]),
+                    price=float(message[3]),
+                    order_model=ORDER_MODEL.MARKET,
+                    amount_model=AMOUNT_MODEL.BY_AMOUNT
+                )
+                self.Broker.receive_order(QA_Event(order=order))
+                trade_mes = self.Broker.query_orders(
+                    ac.account_cookie, 'filled')
+                # print(trade_mes)
+                res = trade_mes.loc[order.account_cookie, order.realorder_id]
+                order.trade(res.trade_id, res.trade_price,
+                            res.trade_amount, res.trade_time)
+                # TODO: market_engine
+                self.write_message({
+                    'topic': 'trade',
+                    'status': 200,
+                    'order_id': order.realorder_id
+                })
 
         except Exception as e:
             print(e)
