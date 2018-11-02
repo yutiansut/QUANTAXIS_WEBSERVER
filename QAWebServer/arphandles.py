@@ -22,27 +22,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import json
-import tornado
 import datetime
+import json
+
+import tornado
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.websocket import WebSocketHandler
 
-from QUANTAXIS.QAFetch.QAQuery import QA_fetch_account, QA_fetch_risk
-from QUANTAXIS.QASU.save_account import save_account
+from QAWebServer.basehandles import QABaseHandler
+from QAWebServer.util import CJsonEncoder
 from QUANTAXIS.QAARP.QAAccount import QA_Account
 from QUANTAXIS.QAARP.QARisk import QA_Performance, QA_Risk
+from QUANTAXIS.QAFetch.QAQuery import QA_fetch_account, QA_fetch_risk
+from QUANTAXIS.QASU.save_account import save_account
 from QUANTAXIS.QASU.user import QA_user_sign_in, QA_user_sign_up
 from QUANTAXIS.QAUtil.QASetting import DATABASE
 from QUANTAXIS.QAUtil.QASql import QA_util_sql_mongo_setting
-from QAWebServer.basehandles import QABaseHandler
-from QAWebServer.util import CJsonEncoder
 
 
 class MemberHandler(QABaseHandler):
     """
     获得所有的回测member
     """
+
     def get(self):
         """
         采用了get_arguents来获取参数
@@ -55,11 +57,12 @@ class MemberHandler(QABaseHandler):
         # data = [res for res in query_account]
         if len(query_account) > 0:
             #data = [QA.QA_Account().from_message(x) for x in query_account]
-            warpper=lambda x: str(x) if isinstance(x,datetime.datetime) else x
-            res=[]
+            def warpper(x): return str(x) if isinstance(
+                x, datetime.datetime) else x
+            res = []
             for item in query_account:
-                res.append([item['portfolio_cookie'],item['account_cookie'],str(item['start_date']),
-                str(item['end_date']),'market_type'])
+                res.append([item['portfolio_cookie'], item['account_cookie'], str(item['start_date']),
+                            str(item['end_date']), 'market_type'])
 
             self.write({'result': res})
         else:
@@ -70,6 +73,7 @@ class AccountHandler(QABaseHandler):
     """
     对于某个回测账户
     """
+
     def get(self):
         """
         采用了get_arguents来获取参数
@@ -83,11 +87,12 @@ class AccountHandler(QABaseHandler):
 
         if len(query_account) > 0:
             #data = [QA.QA_Account().from_message(x) for x in query_account]
-            warpper=lambda x: str(x) if isinstance(x,datetime.datetime) else x
+            def warpper(x): return str(x) if isinstance(
+                x, datetime.datetime) else x
             for item in query_account:
-                item['trade_index']=list(map(str,item['trade_index']))
-                item['history']=[list(map(warpper,itemd)) for itemd in item['history']]
-
+                item['trade_index'] = list(map(str, item['trade_index']))
+                item['history'] = [list(map(warpper, itemd))
+                                   for itemd in item['history']]
 
             self.write({'result': query_account})
         else:
@@ -98,6 +103,7 @@ class RiskHandler(QABaseHandler):
     """
     回测账户的风险评价
     """
+
     def get(self):
         account_cookie = self.get_argument('account_cookie', default='admin')
 
@@ -109,6 +115,3 @@ class RiskHandler(QABaseHandler):
             self.write({'result': query_account})
         else:
             self.write('WRONG')
-
-
-

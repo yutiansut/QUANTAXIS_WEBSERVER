@@ -11,7 +11,6 @@ from tornado.websocket import WebSocketHandler
 from QAWebServer.basehandles import QABaseHandler, QAWebSocketHandler
 from QUANTAXIS.QAUtil.QADict import QA_util_dict_remove_key
 
-# from QUANTAXIS.QAUtil.QASetting import DATABASE
 
 class CommandHandler(QABaseHandler):
     def get(self):
@@ -37,20 +36,16 @@ class RunnerHandler(QAWebSocketHandler):
             line = p.stdout.readline()
             line = line.strip()
             if line:
-
                 self.write_message(line)
-                #print('QUANTAXIS: [{}]'.format(line))
+
         if p.returncode == 0:
             self.write_message('backtest run  success')
 
         else:
             self.write_message('Subprogram failed')
-        # return p.returncode
 
     def on_close(self):
         pass
-        # self.write_message('close')
-
 
 
 if __name__ == "__main__":

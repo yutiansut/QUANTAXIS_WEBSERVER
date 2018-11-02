@@ -32,7 +32,7 @@ LICENSE = "MIT"
 
 setup(
     name=NAME,
-    version='1.0',
+    version='1.3.1',
     description=DESCRIPTION,
     long_description='automatic run quantaxis program',
     classifiers=[
@@ -45,6 +45,7 @@ setup(
     entry_points={
         'console_scripts': [
             'quantaxis_webserver=QAWebServer.QA_Web:main',
+            'quantaxis_webservice=QAWebServer.windowsservice:servicemain'
         ]
     },
     # install_requires=requirements,
