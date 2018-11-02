@@ -174,6 +174,10 @@ class AccModelHandler(QAWebSocketHandler):
                     self.write_message({'topic': 'login',
                                         'status': 200,
                                         'account_cookie': self.account.account_cookie})
+                elif broker in ['ths_moni', 'tdx_moni']:
+                    self.account = self.port.new_account(
+                        account_cookie=account
+                    )
 
             elif message[0] == 'trade':
                 """account/code/price/amount/towards/time
