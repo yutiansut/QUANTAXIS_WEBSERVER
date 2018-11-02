@@ -113,6 +113,7 @@ class AccModelHandler(QAWebSocketHandler):
     broker = ['haitong', 'ths_moni', 'tdx_moni',
               'quantaxis_backtest', 'ctp', 'ctp_min']
     Broker = QA_BacktestBroker()
+    systime = False
 
     def open(self):
         self.write_message({
@@ -186,6 +187,9 @@ class AccModelHandler(QAWebSocketHandler):
                 """
                 print(message)
                 ac = self.port.get_account_by_cookie(message[1])
+                self.systime= self.systime if self.systime else str(message[6])
+                if self.systime < str(message[6]):
+                    ac.settle()
 
                 order = ac.send_order(
                     code=str(message[2]),
@@ -203,6 +207,7 @@ class AccModelHandler(QAWebSocketHandler):
                 res = trade_mes.loc[order.account_cookie, order.realorder_id]
                 order.trade(res.trade_id, res.trade_price,
                             res.trade_amount, res.trade_time)
+                
                 # TODO: market_engine
                 self.write_message({
                     'topic': 'trade',
