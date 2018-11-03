@@ -200,20 +200,28 @@ class AccModelHandler(QAWebSocketHandler):
                     order_model=ORDER_MODEL.MARKET,
                     amount_model=AMOUNT_MODEL.BY_AMOUNT
                 )
-                self.Broker.receive_order(QA_Event(order=order))
-                trade_mes = self.Broker.query_orders(
-                    ac.account_cookie, 'filled')
-                # print(trade_mes)
-                res = trade_mes.loc[order.account_cookie, order.realorder_id]
-                order.trade(res.trade_id, res.trade_price,
-                            res.trade_amount, res.trade_time)
-                
-                # TODO: market_engine
-                self.write_message({
-                    'topic': 'trade',
-                    'status': 200,
-                    'order_id': order.realorder_id
-                })
+                try:
+                    self.Broker.receive_order(QA_Event(order=order))
+                    trade_mes = self.Broker.query_orders(
+                        ac.account_cookie, 'filled')
+                    # print(trade_mes)
+                    res = trade_mes.loc[order.account_cookie, order.realorder_id]
+                    order.trade(res.trade_id, res.trade_price,
+                                res.trade_amount, res.trade_time)
+                    
+                    # TODO: market_engine
+                    self.write_message({
+                        'topic': 'trade',
+                        'status': 200,
+                        'order_id': order.realorder_id
+                    })
+                except Exception as e:
+                    self.write_message({
+                        'topic':'trade',
+                        'status': 400,
+                        'mes': str(e)
+                    })
+
 
         except Exception as e:
             print(e)
