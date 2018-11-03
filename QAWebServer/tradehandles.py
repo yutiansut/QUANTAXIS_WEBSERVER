@@ -126,6 +126,7 @@ class AccModelHandler(QAWebSocketHandler):
         返回值需要带上
         1. topic
         2. status
+        3. mes 用于客户端记录log
         """
         try:
             message = message.split('$')
@@ -159,7 +160,8 @@ class AccModelHandler(QAWebSocketHandler):
                     self.write_message({
                         'topic': 'account_info',
                         'status': 200,
-                        'data': {'hold': ac.hold.to_dict(), 'cash': ac.cash_available}
+                        'data': {'hold': ac.hold.to_dict(), 'cash': ac.cash_available},
+                        'mes': 'QAT: get account {} info successfully'.format(ac.account_cookie)
                     })
             elif message[0] == 'login':
                 """
@@ -174,7 +176,8 @@ class AccModelHandler(QAWebSocketHandler):
                         account_cookie=account)
                     self.write_message({'topic': 'login',
                                         'status': 200,
-                                        'account_cookie': self.account.account_cookie})
+                                        'account_cookie': self.account.account_cookie},
+                                        'mes': 'QAT: success login QUANTAXIS_BACKTEST  welcome {}'.format(self.account.account_cookie)})
                 elif broker in ['ths_moni', 'tdx_moni']:
                     self.account = self.port.new_account(
                         account_cookie=account
@@ -213,7 +216,8 @@ class AccModelHandler(QAWebSocketHandler):
                     self.write_message({
                         'topic': 'trade',
                         'status': 200,
-                        'order_id': order.realorder_id
+                        'order_id': order.realorder_id,
+                        'mes': 'trade success TradeID: {} | Trade_Price: {} | Trade_Amount: {} | Trade_Time: | {}'.format(res.trade_id, res.trade_price, res.trade_amount, res.trade_time),
                     })
                 except Exception as e:
                     self.write_message({
