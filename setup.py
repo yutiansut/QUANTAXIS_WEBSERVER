@@ -32,7 +32,7 @@ LICENSE = "MIT"
 
 setup(
     name=NAME,
-    version='1.3.1',
+    version='1.3.2',
     description=DESCRIPTION,
     long_description='automatic run quantaxis program',
     classifiers=[
