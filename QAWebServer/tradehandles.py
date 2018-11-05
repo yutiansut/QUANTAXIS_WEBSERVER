@@ -33,7 +33,7 @@ from QUANTAXIS.QAARP import QA_Account, QA_Portfolio, QA_User
 from QAWebServer.basehandles import QABaseHandler, QAWebSocketHandler
 from QUANTAXIS.QAMarket.QAShipaneBroker import QA_SPEBroker
 from QUANTAXIS.QAMarket.QABacktestBroker import QA_BacktestBroker
-from QUANTAXIS.QAUtil.QAParameter import ORDER_DIRECTION,ORDER_STATUS,ORDER_MODEL,AMOUNT_MODEL
+from QUANTAXIS.QAUtil.QAParameter import ORDER_DIRECTION, ORDER_STATUS, ORDER_MODEL, AMOUNT_MODEL
 from QUANTAXIS.QAEngine.QAEvent import QA_Event
 from QUANTAXIS.QAUtil.QATransform import QA_util_to_json_from_pandas
 """
@@ -119,6 +119,7 @@ class AccModelHandler(QAWebSocketHandler):
         self.write_message({
             'data': 'QUANTAXIS BACKEND: realtime socket start',
             'topic': 'open',
+            'mes': 'QUANTAXIS BACKEND: realtime socket start',
             'status': 200})
 
     def on_message(self, message):
@@ -134,26 +135,36 @@ class AccModelHandler(QAWebSocketHandler):
             if message[0] == 'create':
                 if message[1] == 'account':
                     self.account = self.port.new_account()
-                    self.write_message(
-                        'CREATE ACCOUNT: {}'.format(self.account.account_cookie))
+                    self.write_message({
+                        'topic': 'create_account',
+                        'status': 200,
+                        'mes': 'QATS: create_account',
+                        'data':'CREATE ACCOUNT: {}'.format(self.account.account_cookie)})
                     self.write_message(self.account.init_assets)
             elif message[0] == 'query':
                 if message[1] == 'portfolio':
-                    self.write_message(
-                        {'result': list(self.port.accounts.keys())})
+                    self.write_message({
+                        'topic': 'query_portfolio',
+                        'status': 200,
+                        'mes': 'QAT: get_query_portfolio',
+                        'result': list(self.port.accounts.keys()),
+                    })
                 elif message[1] == 'history':
                     self.write_message({
                         'topic': 'history',
                         'status': 200,
+                        'mes': 'QAT: get_query_history',
                         'data': self.port.get_account_by_cookie(message[2]).history})
                 elif message[1] == 'filled_order':
                     self.write_message({
                         'topic': 'filled_orders',
+                        'mes': 'QAT: get_filled_order_query',
                         'status': 200
                     })
                 elif message[1] == 'available_account':
                     self.write_message({'status': 200,
                                         'topic': 'query_account',
+                                        'mes': 'QAT: get_query_account_command',
                                         'data': list(self.port.accounts.keys())})
                 elif message[1] == 'info':
                     ac = self.port.get_account_by_cookie(message[2])
@@ -187,10 +198,22 @@ class AccModelHandler(QAWebSocketHandler):
                 """account/code/price/amount/towards/time
 
                 先给个简易版本
+
+                topic: trade
+                status: 200/304/404/500
+                mes: xxxx
+                data: xxxx
+
                 """
                 print(message)
+                self.write_message({
+                    'topic': 'mes',
+                    'status': 200,
+                    'mes': 'QAtrader:get_{}_{}_{}_{}_{}'.format(message[2], message[3], message[4], message[5], message[6])
+                })
                 ac = self.port.get_account_by_cookie(message[1])
-                self.systime= self.systime if self.systime else str(message[6])
+                self.systime = self.systime if self.systime else str(
+                    message[6])
                 if self.systime < str(message[6]):
                     ac.settle()
 
@@ -203,29 +226,36 @@ class AccModelHandler(QAWebSocketHandler):
                     order_model=ORDER_MODEL.MARKET,
                     amount_model=AMOUNT_MODEL.BY_AMOUNT
                 )
-                try:
-                    self.Broker.receive_order(QA_Event(order=order))
-                    trade_mes = self.Broker.query_orders(
-                        ac.account_cookie, 'filled')
-                    # print(trade_mes)
-                    res = trade_mes.loc[order.account_cookie, order.realorder_id]
-                    order.trade(res.trade_id, res.trade_price,
-                                res.trade_amount, res.trade_time)
-                    
-                    # TODO: market_engine
+                if order:
+                    try:
+                        self.Broker.receive_order(QA_Event(order=order))
+                        trade_mes = self.Broker.query_orders(
+                            ac.account_cookie, 'filled')
+                        # print(trade_mes)
+                        res = trade_mes.loc[order.account_cookie,
+                                            order.realorder_id]
+                        order.trade(res.trade_id, res.trade_price,
+                                    res.trade_amount, res.trade_time)
+
+                        # TODO: market_engine
+                        self.write_message({
+                            'topic': 'trade',
+                            'status': 200,
+                            'order_id': order.realorder_id,
+                            'mes': 'trade success TradeID: {} | Trade_Price: {} | Trade_Amount: {} | Trade_Time: | {}'.format(res.trade_id, res.trade_price, res.trade_amount, res.trade_time),
+                        })
+                    except Exception as e:
+                        self.write_message({
+                            'topic': 'trade',
+                            'status': 400,
+                            'mes': str(e)
+                        })
+                else:
                     self.write_message({
                         'topic': 'trade',
-                        'status': 200,
-                        'order_id': order.realorder_id,
-                        'mes': 'trade success TradeID: {} | Trade_Price: {} | Trade_Amount: {} | Trade_Time: | {}'.format(res.trade_id, res.trade_price, res.trade_amount, res.trade_time),
+                        'status': 500,
+                        'mes': 'QATrader: Failed to create order'
                     })
-                except Exception as e:
-                    self.write_message({
-                        'topic':'trade',
-                        'status': 400,
-                        'mes': str(e)
-                    })
-
 
         except Exception as e:
             print(e)
