@@ -108,6 +108,9 @@ class TradeInfoHandler(QABaseHandler):
             self.write({'result': data})
 
 
+null = None
+
+
 class AccModelHandler(QAWebSocketHandler):
     port = QA_Portfolio()
     broker = ['haitong', 'ths_moni', 'tdx_moni',
@@ -130,57 +133,58 @@ class AccModelHandler(QAWebSocketHandler):
         3. mes 用于客户端记录log
         """
         try:
-            message = message.split('$')
+            message = eval(message)
+
             # self.write_message({'topic':'receive', 'status': 304, 'input_param': message})
-            if message[0] == 'create':
-                if message[1] == 'account':
-                    self.account = self.port.new_account()
-                    self.write_message({
-                        'topic': 'create_account',
-                        'status': 200,
-                        'mes': 'QATS: create_account',
-                        'data':'CREATE ACCOUNT: {}'.format(self.account.account_cookie)})
-                    self.write_message(self.account.init_assets)
-            elif message[0] == 'query':
-                if message[1] == 'portfolio':
+            if message['topic'] == 'query':
+                """
+                {
+                    'topic' : 'query',
+                    'subtopic': 'xxxx',
+                }
+                """
+
+                if message['subtopic'] == 'portfolio':
                     self.write_message({
                         'topic': 'query_portfolio',
                         'status': 200,
                         'mes': 'QAT: get_query_portfolio',
                         'result': list(self.port.accounts.keys()),
                     })
-                elif message[1] == 'history':
+                elif message['subtopic'] == 'history':
                     self.write_message({
                         'topic': 'history',
                         'status': 200,
                         'mes': 'QAT: get_query_history',
-                        'data': self.port.get_account_by_cookie(message[2]).history})
-                elif message[1] == 'filled_order':
+                        'data': self.port.get_account_by_cookie(message['account_cookie']).history})
+                elif message['subtopic'] == 'filled_order':
                     self.write_message({
                         'topic': 'filled_orders',
                         'mes': 'QAT: get_filled_order_query',
                         'status': 200
                     })
-                elif message[1] == 'available_account':
+                elif message['subtopic'] == 'available_account':
                     self.write_message({'status': 200,
                                         'topic': 'query_account',
                                         'mes': 'QAT: get_query_account_command',
                                         'data': list(self.port.accounts.keys())})
-                elif message[1] == 'info':
-                    ac = self.port.get_account_by_cookie(message[2])
+                elif message['subtopic'] == 'info':
+                    ac = self.port.get_account_by_cookie(
+                        message['account_cookie'])
                     self.write_message({
                         'topic': 'account_info',
                         'status': 200,
                         'data': {'hold': ac.hold.to_dict(), 'cash': ac.cash_available},
                         'mes': 'QAT: get account {} info successfully'.format(ac.account_cookie)
                     })
-            elif message[0] == 'login':
+            elif message['topic'] == 'login':
                 """
                 login$account$broker$password$tpassword$serverip
+
                 """
 
                 account, broker, password, tpassword, serverip = message[
-                    1], message[2], message[3], message[4], message[5]
+                    'account_cookie'], message['broker'], message['password'], message['tpassword'], message['server_ip']
 
                 if broker == 'quantaxis_backtest':
                     self.account = self.port.new_account(
@@ -194,10 +198,21 @@ class AccModelHandler(QAWebSocketHandler):
                         account_cookie=account
                     )
 
-            elif message[0] == 'trade':
+            elif message['topic'] == 'trade':
                 """account/code/price/amount/towards/time
 
                 先给个简易版本
+
+                websocket 请求
+                {
+                'topic': 'trade',
+                'code' : code,
+                'account': xxxx,
+                'price': price,
+                'amount' : amount,
+                'time' : time,
+                'towards': towards
+                }
 
                 topic: trade
                 status: 200/304/404/500
@@ -205,24 +220,23 @@ class AccModelHandler(QAWebSocketHandler):
                 data: xxxx
 
                 """
-                print(message)
                 self.write_message({
                     'topic': 'mes',
                     'status': 200,
-                    'mes': 'QAtrader:get_{}_{}_{}_{}_{}'.format(message[2], message[3], message[4], message[5], message[6])
+                    'mes': 'QAtrader:get_{}_{}_{}_{}_{}'.format(message['account'], message['code'], message['price'], message['amount'], message['time'])
                 })
-                ac = self.port.get_account_by_cookie(message[1])
+                ac = self.port.get_account_by_cookie(message['account'])
                 self.systime = self.systime if self.systime else str(
-                    message[6])
-                if self.systime < str(message[6]):
+                    message['time'])
+                if self.systime < str(message['time']):
                     ac.settle()
 
                 order = ac.send_order(
-                    code=str(message[2]),
-                    time=str(message[6]),
-                    amount=int(message[4]),
-                    towards=int(message[5]),
-                    price=float(message[3]),
+                    code=str(message['code']),
+                    time=str(message['time']),
+                    amount=int(message['amount']),
+                    towards=int(message['towards']),
+                    price=float(message['price']),
                     order_model=ORDER_MODEL.MARKET,
                     amount_model=AMOUNT_MODEL.BY_AMOUNT
                 )
