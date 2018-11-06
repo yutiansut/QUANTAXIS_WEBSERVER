@@ -16,3 +16,6 @@ api参见: [backend_api](./backendapi.md)
 
     - 一个完备的websocket通讯/交易机制
     - 
+
+- 1.3.4
+    - 改用websocket+ json 的模式进行cs通信
