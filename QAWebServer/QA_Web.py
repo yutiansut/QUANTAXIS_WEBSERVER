@@ -45,7 +45,7 @@ from QAWebServer.userhandles import (PersonBlockHandler, SigninHandler,
 from QAWebServer.jobhandler import JOBHandler
 from tornado_http2.server import Server
 from QUANTAXIS.QAUtil.QASetting import QASETTING
-
+from terminado import TermSocket, SingleTermManager
 
 class INDEX(QABaseHandler):
     def get(self):
@@ -54,9 +54,12 @@ class INDEX(QABaseHandler):
                     'github_page': 'https://github.com/yutiansut/QUANTAXIS_WEBSERVER/blob/master/backendapi.md',
                     'url': [item[0] for item in handlers]})
 
-
+term_manager = SingleTermManager(shell_command=['bash'])
 handlers = [
-    (r"/", INDEX),
+    #(r"/", INDEX),
+    (r"/websocket", TermSocket, {'term_manager': term_manager}),
+    (r"/()", tornado.web.StaticFileHandler, {'path':'index.html'}),
+    (r"/(.*)", tornado.web.StaticFileHandler, {'path':'.'}),
     (r"/marketdata/stock/day", StockdayHandler),
     (r"/marketdata/stock/min", StockminHandler),
     (r"/marketdata/stock/block", StockBlockHandler),

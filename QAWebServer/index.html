@@ -1,63 +1,28 @@
+<!doctype html>
 <html>
+  <head>
+    <link rel="stylesheet" href="/dist/xterm.css" />
+    <link rel="stylesheet" href="/demo/style.css" />
+    <script src="/dist/xterm.js"></script>
+    <script src="/dist/addons/terminado/terminado.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div id="terminal-container"></div>
+    </div>
+    <script>
+      terminado.apply(Terminal);
 
-<head>
-    <script type="text/javascript">  
-        var ws = new WebSocket("ws://localhost:8010/command/runbacktest");
-        ws.onmessage = function (event) {
-            var div1 = document.createElement("div");
-            div1.innerHTML = event.data;
-            document.body.appendChild(div1);
-        }
-        function send() {
-            ws.send(document.getElementById('chat').value);
-        }
-        function stop() {
-            ws.send('stop')
-        }
+      var term = new Terminal(),
+          protocol = (location.protocol === 'http:') ? 'wss://' : 'ws://',
+          socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + "/websocket";
+          sock = new WebSocket(socketURL);
+
+      sock.addEventListener('open', function () {
+        term.terminadoAttach(sock);
+      });
+
+      term.open(document.getElementById('terminal-container'));
     </script>
-</head>
-
-
-<!-- 
-    这个示例html实现了:
-    
-    联入websocket,发送code的请求,并将结果增加到html中
-
-    @yutiansut
-    2018/2/16
- -->
-
-<body>
-    <div>
-        input the code
-        <input id="chat">
-        <button onclick="send()">send</button>
-    </div>
-
-    <div>
-        (r"/marketdata/stock/day", StockdayHandler),
-        (r"/marketdata/stock/min", StockminHandler),
-        (r"/marketdata/stock/block", StockBlockHandler),
-        (r"/marketdata/stock/price", StockPriceHandler),
-        (r"/marketdata/stock/code", StockCodeHandler),
-        (r"/user/signin", SigninHandler),
-        (r"/user/signup", SignupHandler),
-        (r"/user/blocksetting", PersonBlockHandler),
-        (r"/strategy/content", StrategyHandler),
-        (r"/backtest/content", BacktestHandler),
-        (r"/trade", AccModelHandler),
-        (r"/tradeinfo", TradeInfoHandler),
-        (r"/realtime", RealtimeSocketHandler),
-        (r"/simulate", SimulateSocketHandler),
-        (r"/monitor", MonitorSocketHandler),
-        (r"/accounts", AccountHandler),
-        (r"/accounts/all", MemberHandler),
-        (r"/risk", RiskHandler),
-        (r"/command/run", CommandHandler),
-        (r"/command/runbacktest", RunnerHandler),
-        (r"/command/jobmapper", JOBHandler)
-    </div>
-
-</body>
-
+  </body>
 </html>
