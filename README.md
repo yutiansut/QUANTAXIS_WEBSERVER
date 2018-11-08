@@ -19,6 +19,8 @@ api参见: [backend_api](./backendapi.md)
 
 - 1.3.3 
     - 增加windows服务(QUANTAXIS_Webservice)
+    - 对应qadesktop 0.0.7 版本
     
 - 1.3.4
     - 改用websocket+ json 的模式进行cs通信
+    - 对应qadesktop 0.0.8 版本
