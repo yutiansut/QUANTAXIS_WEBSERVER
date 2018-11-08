@@ -56,10 +56,10 @@ class INDEX(QABaseHandler):
 
 term_manager = SingleTermManager(shell_command=['bash'])
 handlers = [
-    #(r"/", INDEX),
-    (r"/websocket", TermSocket, {'term_manager': term_manager}),
-    (r"/()", tornado.web.StaticFileHandler, {'path':'index.html'}),
-    (r"/(.*)", tornado.web.StaticFileHandler, {'path':'.'}),
+    (r"/", INDEX),
+    # (r"/websocket", TermSocket, {'term_manager': term_manager}),
+    # (r"/()", tornado.web.StaticFileHandler, {'path':'index.html'}),
+    # (r"/(.*)", tornado.web.StaticFileHandler, {'path':'.'}),
     (r"/marketdata/stock/day", StockdayHandler),
     (r"/marketdata/stock/min", StockminHandler),
     (r"/marketdata/stock/block", StockBlockHandler),
