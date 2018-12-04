@@ -189,10 +189,12 @@ class AccModelHandler(QAWebSocketHandler):
                 if broker == 'quantaxis_backtest':
                     self.account = self.port.new_account(
                         account_cookie=account)
+                    print(self.account.message)
                     self.write_message({'topic': 'login',
                                         'status': 200,
                                         'account_cookie': self.account.account_cookie,
                                         'mes': 'QAT: success login QUANTAXIS_BACKTEST  welcome {}'.format(self.account.account_cookie)})
+                    
                 elif broker in ['ths_moni', 'tdx_moni']:
                     self.account = self.port.new_account(
                         account_cookie=account
