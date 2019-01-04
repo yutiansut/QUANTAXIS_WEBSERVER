@@ -38,7 +38,7 @@ from QAWebServer.basehandles import QABaseHandler
 class SignupHandler(QABaseHandler):
     def get(self):
         """注册接口
-        
+
         Arguments:
             QABaseHandler {[type]} -- [description]
 
@@ -59,7 +59,7 @@ class SignupHandler(QABaseHandler):
 class SigninHandler(QABaseHandler):
     def get(self):
         """登陆接口
-        
+
         Arguments:
             QABaseHandler {[type]} -- [description]
 
@@ -71,8 +71,7 @@ class SigninHandler(QABaseHandler):
 
         username = self.get_argument('user', default='admin')
         password = self.get_argument('password', default='admin')
-        res = QA_user_sign_in(username, password,
-                              client=DATABASE)
+        res = QA_user_sign_in(username, password, DATABASE)
         if res is not None:
             self.write('SUCCESS')
         else:
