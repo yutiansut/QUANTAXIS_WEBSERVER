@@ -50,7 +50,7 @@ class SignupHandler(QABaseHandler):
 
         username = self.get_argument('user', default='admin')
         password = self.get_argument('password', default='admin')
-        if QA_user_sign_up(username, password, client=QA_util_sql_mongo_setting()):
+        if QA_user_sign_up(username, password, DATABASE):
             self.write('SUCCESS')
         else:
             self.write('WRONG')
@@ -72,7 +72,7 @@ class SigninHandler(QABaseHandler):
         username = self.get_argument('user', default='admin')
         password = self.get_argument('password', default='admin')
         res = QA_user_sign_in(username, password,
-                              client=QA_util_sql_mongo_setting())
+                              client=DATABASE)
         if res is not None:
             self.write('SUCCESS')
         else:
