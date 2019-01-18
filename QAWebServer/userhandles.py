@@ -32,6 +32,7 @@ from tornado.websocket import WebSocketHandler
 from QUANTAXIS.QASU.user import QA_user_sign_in, QA_user_sign_up
 from QUANTAXIS.QAARP import QA_User
 from QUANTAXIS.QAUtil.QASetting import DATABASE
+from QUANTAXIS.QAUtil import QA_util_to_json_from_pandas
 from QUANTAXIS.QAUtil.QASql import QA_util_sql_mongo_setting
 from QAWebServer.basehandles import QABaseHandler
 
@@ -87,8 +88,21 @@ class UserHandler(QABaseHandler):
 
         user = QA_User(username=username, password=password)
 
-        self.write({
-            "result": user.message})
+        if action == 'query':
+            self.write({
+                "result": user.message})
+        elif action == 'query_strategy':
+            status = self.get_argument('status', 'all')
+            if status == 'running':
+                self.write({
+                    'status': 200,
+                    'result': QA_util_to_json_from_pandas(user.subscribing_strategy)
+                })
+            elif status == 'all':
+                self.write({
+                    'status': 200,
+                    'result': QA_util_to_json_from_pandas(user.subscribed_strategy)
+                })
 
     def post(self):
         """动作修改
