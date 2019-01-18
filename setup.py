@@ -32,7 +32,7 @@ LICENSE = "MIT"
 
 setup(
     name=NAME,
-    version='1.3.5',
+    version='1.3.6',
     description=DESCRIPTION,
     long_description='quantaxis webserver',
     classifiers=[
