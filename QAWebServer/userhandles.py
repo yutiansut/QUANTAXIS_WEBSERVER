@@ -30,6 +30,7 @@ from tornado.web import Application, RequestHandler, authenticated
 from tornado.websocket import WebSocketHandler
 
 from QUANTAXIS.QASU.user import QA_user_sign_in, QA_user_sign_up
+from QUANTAXIS.QAARP import QA_User
 from QUANTAXIS.QAUtil.QASetting import DATABASE
 from QUANTAXIS.QAUtil.QASql import QA_util_sql_mongo_setting
 from QAWebServer.basehandles import QABaseHandler
@@ -78,6 +79,46 @@ class SigninHandler(QABaseHandler):
             self.write('WRONG')
 
 
+class UserHandler(QABaseHandler):
+    def get(self):
+        action = self.get_argument('action', default='query')
+        username = self.get_argument('username', default='admin')
+        password = self.get_argument('password', default='admin')
+
+        user = QA_User(username=username, password=password)
+
+        self.write({
+            "result": user.message})
+
+    def post(self):
+        """动作修改
+        """
+
+        action = self.get_argument('action')
+
+        username = self.get_argument('username', default='admin')
+        password = self.get_argument('password', default='admin')
+        try:
+            user = QA_User(username=username, password=password)
+            if action == 'change_password':
+                user.password = str(self.get_argument('password'))
+            elif action == 'change_phone':
+                user.phone = str(self.get_argument('phone'))
+            elif action == 'change_coins':
+                user.coins = float(self.get_argument('coins'))
+            elif action == 'subscribe_strategy':
+                user.subscribe_strategy(self.get_argument('strategy_id'), self.get_argument(
+                    'last'), cost_coins=self.get_argument('cost_coins'))
+            elif action == 'unsubscribe_strategy':
+                user.unsubscribe_stratgy(self.get_argument('strategy_id'))
+            elif action == 'subscribe_code':
+                user.sub_code(self.get_argument('code'))
+            user.save()
+            self.write({'status': 200})
+        except:
+            self.write({'status': 400})
+
+
 class PersonBlockHandler(QABaseHandler):
     def get(self):
         """
@@ -110,7 +151,8 @@ if __name__ == '__main__':
         handlers=[
 
             (r"/user/signin", SigninHandler),
-            (r"/user/signup", SignupHandler)
+            (r"/user/signup", SignupHandler),
+            (r"/user", UserHandler)
         ],
         debug=True
     )
