@@ -107,13 +107,14 @@ class UserHandler(QABaseHandler):
             elif action == 'change_coins':
                 user.coins = float(self.get_argument('coins'))
             elif action == 'subscribe_strategy':
-                user.subscribe_strategy(self.get_argument('strategy_id'), self.get_argument(
-                    'last'), cost_coins=self.get_argument('cost_coins'))
+                user.subscribe_strategy(self.get_argument('strategy_id'), int(self.get_argument(
+                    'last')), cost_coins=int(self.get_argument('cost_coins')))
             elif action == 'unsubscribe_strategy':
                 user.unsubscribe_stratgy(self.get_argument('strategy_id'))
             elif action == 'subscribe_code':
                 user.sub_code(self.get_argument('code'))
             user.save()
+            #
             self.write({'status': 200})
         except:
             self.write({'status': 400})
