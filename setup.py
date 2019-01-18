@@ -21,7 +21,7 @@ PACKAGES = ["QAWebServer"]
 包含的包，可以多个，这是一个列表
 """
 
-DESCRIPTION = "QUANTAXIS:Quantitative Financial Strategy Framework"
+DESCRIPTION = "QUANTAXIS WEBSERVER: WEBSERVER FOR QUANTAXIS"
 KEYWORDS = ["quantaxis", "quant", "finance", "Backtest", 'Framework']
 AUTHOR_EMAIL = "yutiansut@qq.com"
 AUTHOR = 'yutiansut'
@@ -32,9 +32,9 @@ LICENSE = "MIT"
 
 setup(
     name=NAME,
-    version='1.3.4',
+    version='1.3.5',
     description=DESCRIPTION,
-    long_description='automatic run quantaxis program',
+    long_description='quantaxis webserver',
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',

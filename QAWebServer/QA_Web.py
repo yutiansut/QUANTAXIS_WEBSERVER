@@ -40,7 +40,7 @@ from QAWebServer.quotationhandles import (MonitorSocketHandler,
 from QAWebServer.strategyhandlers import BacktestHandler, StrategyHandler
 from QAWebServer.tradehandles import AccModelHandler, TradeInfoHandler
 from QAWebServer.userhandles import (PersonBlockHandler, SigninHandler,
-                                     SignupHandler)
+                                     SignupHandler,UserHandler)
 
 from QAWebServer.jobhandler import JOBHandler
 from tornado_http2.server import Server
@@ -67,6 +67,7 @@ handlers = [
     (r"/marketdata/stock/code", StockCodeHandler),
     (r"/user/signin", SigninHandler),
     (r"/user/signup", SignupHandler),
+    (r"/user",UserHandler),
     (r"/user/blocksetting", PersonBlockHandler),
     (r"/strategy/content", StrategyHandler),
     (r"/backtest/content", BacktestHandler),
