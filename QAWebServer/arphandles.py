@@ -57,12 +57,20 @@ class MemberHandler(QABaseHandler):
         # data = [res for res in query_account]
         if len(query_account) > 0:
             #data = [QA.QA_Account().from_message(x) for x in query_account]
-            def warpper(x): return str(x) if isinstance(
-                x, datetime.datetime) else x
+            def warpper(x):
+                return str(x) if isinstance(x, datetime.datetime) else x
+
             res = []
             for item in query_account:
-                res.append([item['portfolio_cookie'], item['account_cookie'], str(item['start_date']),
-                            str(item['end_date']), 'market_type'])
+                res.append(
+                    [
+                        item['portfolio_cookie'],
+                        item['account_cookie'],
+                        str(item['start_date']),
+                        str(item['end_date']),
+                        'market_type'
+                    ]
+                )
 
             self.write({'result': res})
         else:
@@ -87,12 +95,15 @@ class AccountHandler(QABaseHandler):
 
         if len(query_account) > 0:
             #data = [QA.QA_Account().from_message(x) for x in query_account]
-            def warpper(x): return str(x) if isinstance(
-                x, datetime.datetime) else x
+            def warpper(x):
+                return str(x) if isinstance(x, datetime.datetime) else x
+
             for item in query_account:
                 item['trade_index'] = list(map(str, item['trade_index']))
-                item['history'] = [list(map(warpper, itemd))
-                                   for itemd in item['history']]
+                item['history'] = [
+                    list(map(warpper,
+                             itemd)) for itemd in item['history']
+                ]
 
             self.write({'result': query_account})
         else:

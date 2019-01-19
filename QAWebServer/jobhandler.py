@@ -1,4 +1,3 @@
-
 import json
 import os
 import shlex
@@ -10,7 +9,6 @@ from tornado.websocket import WebSocketHandler
 
 from QAWebServer.basehandles import QABaseHandler, QAWebSocketHandler
 from QUANTAXIS.QAUtil.QADict import QA_util_dict_remove_key
-
 """JOBHANDLER专门负责任务的部署和状态的查看
 
 uri 路径
@@ -49,7 +47,7 @@ class JOBHandler(QABaseHandler):
             res = quantaxis_run.delay(files, program)
             # DATABASE.joblist.insert({'program':program,'files':files,'status':'running','job_id':str(res.id)})
             self.write({'status': 'pending', 'job_id': str(res.id)})
-            
+
         else:
             self.write({'status': 'error'})
 
@@ -63,14 +61,28 @@ class JOBHandler(QABaseHandler):
             return
         job_id = self.get_argument('job_id', 'all')
         if job_id == 'all':
-            self.write({'result': [QA_util_dict_remove_key(
-                item, '_id') for item in query_result()]})
+            self.write(
+                {
+                    'result': [
+                        QA_util_dict_remove_key(item,
+                                                '_id')
+                        for item in query_result()
+                    ]
+                }
+            )
         else:
-            self.write({'result': [QA_util_dict_remove_key(
-                item, '_id') for item in query_onejob(job_id)]})
-
+            self.write(
+                {
+                    'result': [
+                        QA_util_dict_remove_key(item,
+                                                '_id')
+                        for item in query_onejob(job_id)
+                    ]
+                }
+            )
 
 
 def JOBStatusHandler(QABaseHandler):
+
     def get(self):
         job_id = self.get_argument('job_id', 'all')

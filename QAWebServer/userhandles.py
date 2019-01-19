@@ -38,6 +38,7 @@ from QAWebServer.basehandles import QABaseHandler
 
 
 class SignupHandler(QABaseHandler):
+
     def get(self):
         """注册接口
 
@@ -59,6 +60,7 @@ class SignupHandler(QABaseHandler):
 
 
 class SigninHandler(QABaseHandler):
+
     def get(self):
         """登陆接口
 
@@ -81,6 +83,7 @@ class SigninHandler(QABaseHandler):
 
 
 class UserHandler(QABaseHandler):
+
     def get(self):
         action = self.get_argument('action', default='query')
         username = self.get_argument('username', default='admin')
@@ -89,20 +92,27 @@ class UserHandler(QABaseHandler):
         user = QA_User(username=username, password=password)
 
         if action == 'query':
-            self.write({
-                "result": user.message})
+            self.write({"result": user.message})
         elif action == 'query_strategy':
             status = self.get_argument('status', 'all')
             if status == 'running':
-                self.write({
-                    'status': 200,
-                    'result': QA_util_to_json_from_pandas(user.subscribing_strategy)
-                })
+                self.write(
+                    {
+                        'status':
+                        200,
+                        'result':
+                        QA_util_to_json_from_pandas(user.subscribing_strategy)
+                    }
+                )
             elif status == 'all':
-                self.write({
-                    'status': 200,
-                    'result': QA_util_to_json_from_pandas(user.subscribed_strategy)
-                })
+                self.write(
+                    {
+                        'status':
+                        200,
+                        'result':
+                        QA_util_to_json_from_pandas(user.subscribed_strategy)
+                    }
+                )
 
     def post(self):
         """动作修改
@@ -121,8 +131,11 @@ class UserHandler(QABaseHandler):
             elif action == 'change_coins':
                 user.coins = float(self.get_argument('coins'))
             elif action == 'subscribe_strategy':
-                user.subscribe_strategy(self.get_argument('strategy_id'), int(self.get_argument(
-                    'last')), cost_coins=int(self.get_argument('cost_coins')))
+                user.subscribe_strategy(
+                    self.get_argument('strategy_id'),
+                    int(self.get_argument('last')),
+                    cost_coins=int(self.get_argument('cost_coins'))
+                )
             elif action == 'unsubscribe_strategy':
                 user.unsubscribe_stratgy(self.get_argument('strategy_id'))
             elif action == 'subscribe_code':
@@ -133,8 +146,12 @@ class UserHandler(QABaseHandler):
         except:
             self.write({'status': 400})
 
+    def delete(self):
+        pass
+
 
 class PersonBlockHandler(QABaseHandler):
+
     def get(self):
         """
         make table for user: user
@@ -164,10 +181,12 @@ class PersonBlockHandler(QABaseHandler):
 if __name__ == '__main__':
     app = Application(
         handlers=[
-
-            (r"/user/signin", SigninHandler),
-            (r"/user/signup", SignupHandler),
-            (r"/user", UserHandler)
+            (r"/user/signin",
+             SigninHandler),
+            (r"/user/signup",
+             SignupHandler),
+            (r"/user",
+             UserHandler)
         ],
         debug=True
     )
