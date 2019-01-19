@@ -151,6 +151,114 @@ http://[ip]:[port]/users/login?name=[]&password=[]
 http://[ip]:[port]/users/signup?name=[]&password=[]
 ```
 
+
+#### 4.1.3 账户模型
+```
+    GET:
+
+    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+
+    action:
+        query(default)
+        query_strategy |  status = all / running
+
+    username:
+        admin(default)
+    password
+        admin(default)
+
+    POST:
+
+    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+
+    action:
+        change_password: 更改账户密码| password={}
+        change_phone: 更改手机号| phone={}
+        change_coins: 更改积分| coins={}
+        subscribe_strategy: 订阅策略| strategy_id={} | last={} | cost_coins={}
+        unsubscribe_strategy: 取消订阅策略| strategy_id={}
+        subscribe_code: 订阅品种| code={}
+
+    #TODO
+
+    action:
+        new_portfolio
+        new_account
+
+
+    DELETE
+
+    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+
+
+    #TODO
+    action:
+        del_portfolio
+        del_account
+
+```
+
+```json
+{
+    "result": {
+        "user_cookie": "USER_gcThpftb",
+        "username": "admin",
+        "password": "admin",
+        "phone": "18626855195",
+        "level": "l1",
+        "utype": "guests",
+        "coins": 8680,
+        "coins_history": [
+            [
+                120,
+                "xxx1",
+                "2019-01-18",
+                2,
+                "f0c97478-1b15-11e9-9c3c-9cb6d020b9c2",
+                "subscribe"
+            ],
+            [
+                0,
+                "xxx1",
+                "2019-01-18",
+                0,
+                "055c9900-1b16-11e9-a217-9cb6d020b9c2",
+                "unsubscribe"
+            ],
+            [
+                1200,
+                "xxx2",
+                "2019-01-18",
+                24,
+                "1950d708-1b16-11e9-a62e-9cb6d020b9c2",
+                "subscribe"
+            ]
+        ],
+        "money": 200000,
+        "subuscribed_strategy": {
+            "xxx1": {
+                "lasttime": 2,
+                "start": "2019-01-18",
+                "strategy_id": "xxx1",
+                "end": "2019-01-22",
+                "status": "canceled",
+                "uuid": "f0c97478-1b15-11e9-9c3c-9cb6d020b9c2"
+            },
+            "xxx2": {
+                "lasttime": 24,
+                "start": "2019-01-18",
+                "strategy_id": "xxx2",
+                "end": "2019-02-28",
+                "status": "running",
+                "uuid": "1950d708-1b16-11e9-a62e-9cb6d020b9c2"
+            }
+        },
+        "subscribed_code": [
+            "RB"
+        ]
+    }
+}
+```
 ###  4.2. 回测部分 /backtest
 
 ####  4.2.1. 回测概览(列表查询)

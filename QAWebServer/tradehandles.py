@@ -44,8 +44,6 @@ POST http://localhost:8888/orders
 DELETE http://localhost:8888/orders/O1234
 GET http://localhost:8888/clients
 """
-
-
 """ 
 心跳包断线重连 ( EXAMPLE 拔网线等直接导致的网络中断)
 http://www.voidcn.com/article/p-zshodvff-mm.html
@@ -113,17 +111,26 @@ null = None
 
 class AccModelHandler(QAWebSocketHandler):
     port = QA_Portfolio()
-    broker = ['haitong', 'ths_moni', 'tdx_moni',
-              'quantaxis_backtest', 'ctp', 'ctp_min']
+    broker = [
+        'haitong',
+        'ths_moni',
+        'tdx_moni',
+        'quantaxis_backtest',
+        'ctp',
+        'ctp_min'
+    ]
     Broker = QA_BacktestBroker()
     systime = False
 
     def open(self):
-        self.write_message({
-            'data': 'QUANTAXIS BACKEND: realtime socket start',
-            'topic': 'open',
-            'mes': 'QUANTAXIS BACKEND: realtime socket start',
-            'status': 200})
+        self.write_message(
+            {
+                'data': 'QUANTAXIS BACKEND: realtime socket start',
+                'topic': 'open',
+                'mes': 'QUANTAXIS BACKEND: realtime socket start',
+                'status': 200
+            }
+        )
 
     def on_message(self, message):
         """
@@ -145,38 +152,66 @@ class AccModelHandler(QAWebSocketHandler):
                 """
 
                 if message['subtopic'] == 'portfolio':
-                    self.write_message({
-                        'topic': 'query_portfolio',
-                        'status': 200,
-                        'mes': 'QAT: get_query_portfolio',
-                        'result': list(self.port.accounts.keys()),
-                    })
+                    self.write_message(
+                        {
+                            'topic': 'query_portfolio',
+                            'status': 200,
+                            'mes': 'QAT: get_query_portfolio',
+                            'result': list(self.port.accounts.keys()),
+                        }
+                    )
                 elif message['subtopic'] == 'history':
-                    self.write_message({
-                        'topic': 'history',
-                        'status': 200,
-                        'mes': 'QAT: get_query_history',
-                        'data': self.port.get_account_by_cookie(message['account_cookie']).history})
+                    self.write_message(
+                        {
+                            'topic':
+                            'history',
+                            'status':
+                            200,
+                            'mes':
+                            'QAT: get_query_history',
+                            'data':
+                            self.port.get_account_by_cookie(
+                                message['account_cookie']
+                            ).history
+                        }
+                    )
                 elif message['subtopic'] == 'filled_order':
-                    self.write_message({
-                        'topic': 'filled_orders',
-                        'mes': 'QAT: get_filled_order_query',
-                        'status': 200
-                    })
+                    self.write_message(
+                        {
+                            'topic': 'filled_orders',
+                            'mes': 'QAT: get_filled_order_query',
+                            'status': 200
+                        }
+                    )
                 elif message['subtopic'] == 'available_account':
-                    self.write_message({'status': 200,
-                                        'topic': 'query_account',
-                                        'mes': 'QAT: get_query_account_command',
-                                        'data': list(self.port.accounts.keys())})
+                    self.write_message(
+                        {
+                            'status': 200,
+                            'topic': 'query_account',
+                            'mes': 'QAT: get_query_account_command',
+                            'data': list(self.port.accounts.keys())
+                        }
+                    )
                 elif message['subtopic'] == 'info':
                     ac = self.port.get_account_by_cookie(
-                        message['account_cookie'])
-                    self.write_message({
-                        'topic': 'account_info',
-                        'status': 200,
-                        'data': {'hold': ac.hold.to_dict(), 'cash': ac.cash_available},
-                        'mes': 'QAT: get account {} info successfully'.format(ac.account_cookie)
-                    })
+                        message['account_cookie']
+                    )
+                    self.write_message(
+                        {
+                            'topic':
+                            'account_info',
+                            'status':
+                            200,
+                            'data': {
+                                'hold': ac.hold.to_dict(),
+                                'cash': ac.cash_available
+                            },
+                            'mes':
+                            'QAT: get account {} info successfully'.format(
+                                ac.account_cookie
+                            )
+                        }
+                    )
             elif message['topic'] == 'login':
                 """
                 login$account$broker$password$tpassword$serverip
@@ -187,21 +222,25 @@ class AccModelHandler(QAWebSocketHandler):
                     'account_cookie'], message['broker'], message['password'], message['tpassword'], message['server_ip']
 
                 if broker == 'quantaxis_backtest':
-                    self.account = self.port.new_account(
-                        account_cookie=account)
+                    self.account = self.port.new_account(account_cookie=account)
                     print(self.account.account_cookie)
-                    
-                    z = {'topic': 'login',
-                         'status': 200,
-                         'account_cookie': self.account.account_cookie,
-                         'mes': 'QAT: success login QUANTAXIS_BACKTEST  welcome {}'.format(self.account.account_cookie)}
+
+                    z = {
+                        'topic':
+                        'login',
+                        'status':
+                        200,
+                        'account_cookie':
+                        self.account.account_cookie,
+                        'mes':
+                        'QAT: success login QUANTAXIS_BACKTEST  welcome {}'
+                        .format(self.account.account_cookie)
+                    }
                     print(z)
                     self.write_message(z)
                     print('fin write')
                 elif broker in ['ths_moni', 'tdx_moni']:
-                    self.account = self.port.new_account(
-                        account_cookie=account
-                    )
+                    self.account = self.port.new_account(account_cookie=account)
                 elif broker in ['simnow']:
 
                     pass
@@ -228,14 +267,26 @@ class AccModelHandler(QAWebSocketHandler):
                 data: xxxx
 
                 """
-                self.write_message({
-                    'topic': 'mes',
-                    'status': 200,
-                    'mes': 'QAtrader:get_{}_{}_{}_{}_{}'.format(message['account'], message['code'], message['price'], message['amount'], message['time'])
-                })
+                self.write_message(
+                    {
+                        'topic':
+                        'mes',
+                        'status':
+                        200,
+                        'mes':
+                        'QAtrader:get_{}_{}_{}_{}_{}'.format(
+                            message['account'],
+                            message['code'],
+                            message['price'],
+                            message['amount'],
+                            message['time']
+                        )
+                    }
+                )
                 ac = self.port.get_account_by_cookie(message['account'])
                 self.systime = self.systime if self.systime else str(
-                    message['time'])
+                    message['time']
+                )
                 if self.systime < str(message['time']):
                     ac.settle()
 
@@ -252,32 +303,54 @@ class AccModelHandler(QAWebSocketHandler):
                     try:
                         self.Broker.receive_order(QA_Event(order=order))
                         trade_mes = self.Broker.query_orders(
-                            ac.account_cookie, 'filled')
+                            ac.account_cookie,
+                            'filled'
+                        )
                         # print(trade_mes)
                         res = trade_mes.loc[order.account_cookie,
                                             order.realorder_id]
-                        order.trade(res.trade_id, res.trade_price,
-                                    res.trade_amount, res.trade_time)
+                        order.trade(
+                            res.trade_id,
+                            res.trade_price,
+                            res.trade_amount,
+                            res.trade_time
+                        )
 
                         # TODO: market_engine
-                        self.write_message({
-                            'topic': 'trade',
-                            'status': 200,
-                            'order_id': order.realorder_id,
-                            'mes': 'trade success TradeID: {} | Trade_Price: {} | Trade_Amount: {} | Trade_Time: | {}'.format(res.trade_id, res.trade_price, res.trade_amount, res.trade_time),
-                        })
+                        self.write_message(
+                            {
+                                'topic':
+                                'trade',
+                                'status':
+                                200,
+                                'order_id':
+                                order.realorder_id,
+                                'mes':
+                                'trade success TradeID: {} | Trade_Price: {} | Trade_Amount: {} | Trade_Time: | {}'
+                                .format(
+                                    res.trade_id,
+                                    res.trade_price,
+                                    res.trade_amount,
+                                    res.trade_time
+                                ),
+                            }
+                        )
                     except Exception as e:
-                        self.write_message({
-                            'topic': 'trade',
-                            'status': 400,
-                            'mes': str(e)
-                        })
+                        self.write_message(
+                            {
+                                'topic': 'trade',
+                                'status': 400,
+                                'mes': str(e)
+                            }
+                        )
                 else:
-                    self.write_message({
-                        'topic': 'trade',
-                        'status': 500,
-                        'mes': 'QATrader: Failed to create order'
-                    })
+                    self.write_message(
+                        {
+                            'topic': 'trade',
+                            'status': 500,
+                            'mes': 'QATrader: Failed to create order'
+                        }
+                    )
 
         except Exception as e:
             print(e)

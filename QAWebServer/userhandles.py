@@ -32,11 +32,13 @@ from tornado.websocket import WebSocketHandler
 from QUANTAXIS.QASU.user import QA_user_sign_in, QA_user_sign_up
 from QUANTAXIS.QAARP import QA_User
 from QUANTAXIS.QAUtil.QASetting import DATABASE
+from QUANTAXIS.QAUtil import QA_util_to_json_from_pandas
 from QUANTAXIS.QAUtil.QASql import QA_util_sql_mongo_setting
 from QAWebServer.basehandles import QABaseHandler
 
 
 class SignupHandler(QABaseHandler):
+
     def get(self):
         """注册接口
 
@@ -58,6 +60,7 @@ class SignupHandler(QABaseHandler):
 
 
 class SigninHandler(QABaseHandler):
+
     def get(self):
         """登陆接口
 
@@ -80,6 +83,53 @@ class SigninHandler(QABaseHandler):
 
 
 class UserHandler(QABaseHandler):
+    """这个handler是QAUser的部分实现
+
+
+    GET:
+
+    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+
+    action:
+        query(default)
+        query_strategy |  status = all / running
+
+    username:
+        admin(default)
+    password
+        admin(default)
+
+    POST:
+
+    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+
+    action:
+        change_password: 更改账户密码| password={}
+        change_phone: 更改手机号| phone={}
+        change_coins: 更改积分| coins={}
+        subscribe_strategy: 订阅策略| strategy_id={} | last={} | cost_coins={}
+        unsubscribe_strategy: 取消订阅策略| strategy_id={}
+        subscribe_code: 订阅品种| code={}
+
+    #TODO
+
+    action:
+        new_portfolio
+        new_account
+
+
+    DELETE
+
+    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+
+
+    #TODO
+    action:
+        del_portfolio
+        del_account
+
+    """
+
     def get(self):
         action = self.get_argument('action', default='query')
         username = self.get_argument('username', default='admin')
@@ -87,8 +137,28 @@ class UserHandler(QABaseHandler):
 
         user = QA_User(username=username, password=password)
 
-        self.write({
-            "result": user.message})
+        if action == 'query':
+            self.write({"result": user.message})
+        elif action == 'query_strategy':
+            status = self.get_argument('status', 'all')
+            if status == 'running':
+                self.write(
+                    {
+                        'status':
+                        200,
+                        'result':
+                        QA_util_to_json_from_pandas(user.subscribing_strategy)
+                    }
+                )
+            elif status == 'all':
+                self.write(
+                    {
+                        'status':
+                        200,
+                        'result':
+                        QA_util_to_json_from_pandas(user.subscribed_strategy)
+                    }
+                )
 
     def post(self):
         """动作修改
@@ -107,19 +177,27 @@ class UserHandler(QABaseHandler):
             elif action == 'change_coins':
                 user.coins = float(self.get_argument('coins'))
             elif action == 'subscribe_strategy':
-                user.subscribe_strategy(self.get_argument('strategy_id'), self.get_argument(
-                    'last'), cost_coins=self.get_argument('cost_coins'))
+                user.subscribe_strategy(
+                    self.get_argument('strategy_id'),
+                    int(self.get_argument('last')),
+                    cost_coins=int(self.get_argument('cost_coins'))
+                )
             elif action == 'unsubscribe_strategy':
                 user.unsubscribe_stratgy(self.get_argument('strategy_id'))
             elif action == 'subscribe_code':
                 user.sub_code(self.get_argument('code'))
             user.save()
+            #
             self.write({'status': 200})
         except:
             self.write({'status': 400})
 
+    def delete(self):
+        pass
+
 
 class PersonBlockHandler(QABaseHandler):
+
     def get(self):
         """
         make table for user: user
@@ -149,10 +227,12 @@ class PersonBlockHandler(QABaseHandler):
 if __name__ == '__main__':
     app = Application(
         handlers=[
-
-            (r"/user/signin", SigninHandler),
-            (r"/user/signup", SignupHandler),
-            (r"/user", UserHandler)
+            (r"/user/signin",
+             SigninHandler),
+            (r"/user/signup",
+             SignupHandler),
+            (r"/user",
+             UserHandler)
         ],
         debug=True
     )
