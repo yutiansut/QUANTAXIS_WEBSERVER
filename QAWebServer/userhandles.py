@@ -83,6 +83,52 @@ class SigninHandler(QABaseHandler):
 
 
 class UserHandler(QABaseHandler):
+    """这个handler是QAUser的部分实现
+
+
+    GET:
+
+    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+
+    action:
+        query(default)
+        query_strategy |  status = all / running
+
+    username:
+        admin(default)
+    password
+        admin(default)
+
+    POST:
+
+    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+
+    action:
+        change_password: 更改账户密码| password={}
+        change_phone: 更改手机号| phone={}
+        change_coins: 更改积分| coins={}
+        subscribe_strategy: 订阅策略| strategy_id={} | last={} | cost_coins={}
+        unsubscribe_strategy: 取消订阅策略| strategy_id={}
+        subscribe_code: 订阅品种| code={}
+
+    #TODO
+
+    action:
+        new_portfolio
+        new_account
+
+
+    DELETE
+
+    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+
+
+    #TODO
+    action:
+        del_portfolio
+        del_account
+
+    """
 
     def get(self):
         action = self.get_argument('action', default='query')
