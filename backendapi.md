@@ -154,14 +154,47 @@ http://[ip]:[port]/users/signup?name=[]&password=[]
 
 #### 4.1.3 账户模型
 ```
-http://[ip]:[port]/user
+    GET:
 
-get:
+    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+
+    action:
+        query(default)
+        query_strategy |  status = all / running
+
+    username:
+        admin(default)
+    password
+        admin(default)
+
+    POST:
+
+    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+
+    action:
+        change_password: 更改账户密码| password={}
+        change_phone: 更改手机号| phone={}
+        change_coins: 更改积分| coins={}
+        subscribe_strategy: 订阅策略| strategy_id={} | last={} | cost_coins={}
+        unsubscribe_strategy: 取消订阅策略| strategy_id={}
+        subscribe_code: 订阅品种| code={}
+
+    #TODO
+
+    action:
+        new_portfolio
+        new_account
 
 
-post: 
-action
+    DELETE
 
+    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+
+
+    #TODO
+    action:
+        del_portfolio
+        del_account
 
 ```
 
