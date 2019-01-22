@@ -132,62 +132,78 @@ class UserHandler(QABaseHandler):
 
     def get(self):
         action = self.get_argument('action', default='query')
-        wechat_id = self.get_argument('wechat_id', default='None')
+        wechat_id = self.get_argument('wechat_id', default=None)
+        if wechat_id is None:
+            self.write({
+                'status':
+                404,
+                'result':
+                'no wechat id'
+            })
+        else:
+            user = QA_User(wechat_id=wechat_id)
 
-        user = QA_User(wechat_id=wechat_id)
-
-        if action == 'query':
-            self.write({"result": user.message})
-        elif action == 'query_strategy':
-            status = self.get_argument('status', 'all')
-            if status == 'running':
-                self.write(
-                    {
-                        'status':
-                        200,
-                        'result':
-                        QA_util_to_json_from_pandas(user.subscribing_strategy)
-                    }
-                )
-            elif status == 'all':
-                self.write(
-                    {
-                        'status':
-                        200,
-                        'result':
-                        QA_util_to_json_from_pandas(user.subscribed_strategy)
-                    }
-                )
+            if action == 'query':
+                self.write({"result": user.message})
+            elif action == 'query_strategy':
+                status = self.get_argument('status', 'all')
+                if status == 'running':
+                    self.write(
+                        {
+                            'status':
+                            200,
+                            'result':
+                            QA_util_to_json_from_pandas(user.subscribing_strategy)
+                        }
+                    )
+                elif status == 'all':
+                    self.write(
+                        {
+                            'status':
+                            200,
+                            'result':
+                            QA_util_to_json_from_pandas(user.subscribed_strategy)
+                        }
+                    )
 
     def post(self):
         """动作修改
         """
 
         action = self.get_argument('action')
-        wechat_id = self.get_argument('wechat_id', default='None')
-        try:
-            user = QA_User(wechat_id=wechat_id)
-            if action == 'change_password':
-                user.password = str(self.get_argument('password'))
-            elif action == 'change_phone':
-                user.phone = str(self.get_argument('phone'))
-            elif action == 'change_coins':
-                user.coins = float(self.get_argument('coins'))
-            elif action == 'subscribe_strategy':
-                user.subscribe_strategy(
-                    self.get_argument('strategy_id'),
-                    int(self.get_argument('last')),
-                    cost_coins=int(self.get_argument('cost_coins'))
-                )
-            elif action == 'unsubscribe_strategy':
-                user.unsubscribe_stratgy(self.get_argument('strategy_id'))
-            elif action == 'subscribe_code':
-                user.sub_code(self.get_argument('code'))
-            user.save()
-            #
-            self.write({'status': 200})
-        except:
-            self.write({'status': 400})
+        wechat_id = self.get_argument('wechat_id', default=None)
+        if wechat_id is None:
+            self.write({
+                'status':
+                404,
+                'result':
+                'no wechat id'
+            })
+        else:
+            try:
+
+                user = QA_User(wechat_id=wechat_id)
+                if action == 'change_password':
+                    user.password = str(self.get_argument('password'))
+                elif action == 'change_phone':
+                    user.phone = str(self.get_argument('phone'))
+                elif action == 'change_coins':
+                    user.coins = float(self.get_argument('coins'))
+                elif action == 'subscribe_strategy':
+                    user.subscribe_strategy(
+                        self.get_argument('strategy_id'),
+                        int(self.get_argument('last')),
+                        cost_coins=int(self.get_argument('cost_coins'))
+                    )
+                elif action == 'unsubscribe_strategy':
+                    user.unsubscribe_stratgy(self.get_argument('strategy_id'))
+                elif action == 'subscribe_code':
+                    user.sub_code(self.get_argument('code'))
+                user.save()
+                #
+                self.write({'status': 200})
+            except:
+                self.write({'status': 400})
 
     def delete(self):
         pass
