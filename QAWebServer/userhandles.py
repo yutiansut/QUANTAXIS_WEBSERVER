@@ -132,10 +132,9 @@ class UserHandler(QABaseHandler):
 
     def get(self):
         action = self.get_argument('action', default='query')
-        username = self.get_argument('username', default='admin')
-        password = self.get_argument('password', default='admin')
+        wechat_id = self.get_argument('wechat_id', default='None')
 
-        user = QA_User(username=username, password=password)
+        user = QA_User(wechat_id=wechat_id)
 
         if action == 'query':
             self.write({"result": user.message})
@@ -165,11 +164,9 @@ class UserHandler(QABaseHandler):
         """
 
         action = self.get_argument('action')
-
-        username = self.get_argument('username', default='admin')
-        password = self.get_argument('password', default='admin')
+        wechat_id = self.get_argument('wechat_id', default='None')
         try:
-            user = QA_User(username=username, password=password)
+            user = QA_User(wechat_id=wechat_id)
             if action == 'change_password':
                 user.password = str(self.get_argument('password'))
             elif action == 'change_phone':
