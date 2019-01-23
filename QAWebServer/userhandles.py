@@ -183,9 +183,11 @@ class UserHandler(QABaseHandler):
 
                 user = QA_User(wechat_id=wechat_id)
                 if action == 'change_password':
-                    user.password = str(self.get_argument('password'))
+                    user.password = str(self.get_argument('password','123456'))
+                if action == 'change_name':
+                    user.username = str(self.get_argument('username','default_name'))
                 elif action == 'change_phone':
-                    user.phone = str(self.get_argument('phone'))
+                    user.phone = str(self.get_argument('phone','123456789'))
                 elif action == 'change_coins':
                     user.coins = float(self.get_argument('coins'))
                 elif action == 'subscribe_strategy':
