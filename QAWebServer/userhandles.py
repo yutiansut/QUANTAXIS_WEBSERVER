@@ -88,20 +88,19 @@ class UserHandler(QABaseHandler):
 
     GET:
 
-    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+    http://ip:port/user?action={}&wechat_id={}&{}{}{}
 
     action:
         query(default)
         query_strategy |  status = all / running
 
-    username:
-        admin(default)
-    password
-        admin(default)
+    wechat_id:
+        None(default)
+
 
     POST:
 
-    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+    http://ip:port/user?action={}&wechat_id={}&{}{}{}
 
     action:
         change_password: 更改账户密码| password={}
@@ -120,7 +119,7 @@ class UserHandler(QABaseHandler):
 
     DELETE
 
-    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+    http://ip:port/user?action={}&wechat_id={}&{}{}{}
 
 
     #TODO
