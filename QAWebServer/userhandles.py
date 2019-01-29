@@ -187,7 +187,7 @@ class UserHandler(QABaseHandler):
                         'result': user.get_portfolio(self.get_argument('portfolio')).message
                     })
                 except Exception as e:
-                    self.wirte({
+                    self.write({
                         'status': 404,
                         'result': str(e)
                     })
