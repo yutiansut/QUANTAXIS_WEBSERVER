@@ -35,6 +35,7 @@ from tornado.websocket import WebSocketClosedError
 
 import QUANTAXIS as QA
 from QAWebServer.basehandles import QABaseHandler, QAWebSocketHandler
+
 """
 要实现2个api
 

@@ -29,7 +29,7 @@ import tornado
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.websocket import WebSocketHandler
 
-from QAWebServer.basehandles import QABaseHandler
+from QAWebServer.basehandles import QABaseHandler, QAWebSocketHandler
 from QAWebServer.util import CJsonEncoder
 from QUANTAXIS.QAARP.QAAccount import QA_Account
 from QUANTAXIS.QAARP.QARisk import QA_Performance, QA_Risk
@@ -109,6 +109,17 @@ class AccountHandler(QABaseHandler):
         else:
             self.write('WRONG')
 
+
+
+class PortfolioHandler(QAWebSocketHandler):
+    """[summary]
+    
+    Arguments:
+        QABaseHandler {[type]} -- [description]
+    """
+
+    def get(self):
+        pass
 
 class RiskHandler(QABaseHandler):
     """

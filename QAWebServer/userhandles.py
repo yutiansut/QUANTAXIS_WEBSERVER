@@ -152,7 +152,8 @@ class UserHandler(QABaseHandler):
                             'status':
                             200,
                             'result':
-                            QA_util_to_json_from_pandas(user.subscribing_strategy)
+                            QA_util_to_json_from_pandas(
+                                user.subscribing_strategy)
                         }
                     )
                 elif status == 'all':
@@ -161,9 +162,35 @@ class UserHandler(QABaseHandler):
                             'status':
                             200,
                             'result':
-                            QA_util_to_json_from_pandas(user.subscribed_strategy)
+                            QA_util_to_json_from_pandas(
+                                user.subscribed_strategy)
                         }
                     )
+            elif action == 'query_portfolio':
+                """获取某个user下的所有portfolio
+
+                """
+                self.write({
+                    'status': 200,
+                    'result': user.portfolio_list
+                })
+            elif action == 'get_portfolio':
+                """
+                ?portfolio = xxxx
+
+                这里主要展示这个portfolio的信息
+                如果需要具体对portfolio进行控制, 则在aprhandlers.portfolio_handler中
+                """
+                try:
+                    self.write({
+                        'status': 200,
+                        'result': user.get_portfolio(self.get_argument('portfolio')).message
+                    })
+                except Exception as e:
+                    self.wirte({
+                        'status': 404,
+                        'result': str(e)
+                    })
 
     def post(self):
         """动作修改
@@ -183,11 +210,13 @@ class UserHandler(QABaseHandler):
 
                 user = QA_User(wechat_id=wechat_id)
                 if action == 'change_password':
-                    user.password = str(self.get_argument('password','123456'))
+                    user.password = str(
+                        self.get_argument('password', '123456'))
                 if action == 'change_name':
-                    user.username = str(self.get_argument('username','default_name'))
+                    user.username = str(self.get_argument(
+                        'username', 'default_name'))
                 elif action == 'change_phone':
-                    user.phone = str(self.get_argument('phone','123456789'))
+                    user.phone = str(self.get_argument('phone', '123456789'))
                 elif action == 'change_coins':
                     user.coins = float(self.get_argument('coins'))
                 elif action == 'subscribe_strategy':
@@ -200,6 +229,9 @@ class UserHandler(QABaseHandler):
                     user.unsubscribe_stratgy(self.get_argument('strategy_id'))
                 elif action == 'subscribe_code':
                     user.sub_code(self.get_argument('code'))
+                elif action == 'add_portfolio':
+                    user.new_portfolio(
+                        portfolio_cookie=self.get_argument('portfolio'))
                 user.save()
                 #
                 self.write({'status': 200})
