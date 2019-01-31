@@ -160,7 +160,8 @@ def main():
     # print(options.content)
     #http_server = tornado.httpserver.HTTPServer(apps)
     http_server = Server(apps)
-    print(port)
+    print('QUANTAXIS WEBSERVER is Listening on: http://localhost:{}'.format(port))
+    print('请打开浏览器/使用JavaScript等来使用该后台, 并且不要关闭当前命令行窗口')
     http_server.bind(port, address=options.address)
     """增加了对于非windows下的机器多进程的支持
     """
