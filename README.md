@@ -48,3 +48,4 @@ api参见: [backend_api](./backendapi.md)
 - 1.3.7
     - 随着QAARP模块的完善和修改, QAWEBSERVER需要完整实现QAARP的功能
     - 支持双登陆模式(model: wechat/password)
+    - TODO: 交易监控

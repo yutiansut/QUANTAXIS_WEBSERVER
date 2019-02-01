@@ -112,6 +112,7 @@ class UserHandler(QABaseHandler):
         unsubscribe_strategy: 取消订阅策略| strategy_id={}
         subscribe_code: 订阅品种| code={}
         change_wechatid: 修改wechat_id| wechat_id={}
+        get_nodeview: 查看节点信息
 
     #TODO
 
@@ -200,6 +201,11 @@ class UserHandler(QABaseHandler):
                         'status': 404,
                         'result': str(e)
                     })
+            elif action =='get_nodeview':
+                self.write({
+                    'status': 200,
+                    'result': user.node_view
+                })
 
     def post(self):
         """动作修改
