@@ -155,18 +155,33 @@ class PortfolioHandler(QAWebSocketHandler):
                 return False
 
     def get(self):
-        action = self.get_argument('action', default='get_account')
+        action = self.get_argument('action', default='get_accounts')
         portfolio = self.get_portfolio(
             self.get_argument('user_cookie'),
             self.get_argument('portfolio_cookie')
         )
         print(portfolio)
         print(portfolio.accounts)
-        if action == 'get_account':
+        if action == 'get_accounts':
+            """获取该portfolio下的所有account
+            """
+
+            res = []
+            for account in portfolio.accounts.values():
+                
+                res.append(
+                    [
+                        account.portfolio_cookie,
+                        account.account_cookie,
+                        str(account.start_date),
+                        str(account.end_date),
+                        account.market_type
+                    ]
+                )
             self.write(
                 {
                     'status': 200,
-                    'result': list(portfolio.accounts.keys())
+                    'result': res
                 }
             )
         elif action == 'get_cash':
