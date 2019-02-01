@@ -142,39 +142,44 @@ class PortfolioHandler(QAWebSocketHandler):
             [type] -- [description]
         """
 
-        if user_cookie is  None or portfolio_cookie  is None:
+        if user_cookie is None or portfolio_cookie is None:
             return False
         else:
             try:
                 portfolio = QA_Portfolio(
-                    user_cookie=user_cookie, portfolio_cookie=portfolio_cookie)
+                    user_cookie=user_cookie,
+                    portfolio_cookie=portfolio_cookie
+                )
                 return portfolio
             except:
                 return False
 
     def get(self):
         action = self.get_argument('action', default='get_account')
-        portfolio = self.get_portfolio(self.get_argument(
-            'user_cookie'), self.get_argument('portfolio_cookie'))
+        portfolio = self.get_portfolio(
+            self.get_argument('user_cookie'),
+            self.get_argument('portfolio_cookie')
+        )
         print(portfolio)
         print(portfolio.accounts)
         if action == 'get_account':
-            self.write({
-                'status': 200,
-                'result': list(portfolio.accounts.keys())
-            })
+            self.write(
+                {
+                    'status': 200,
+                    'result': list(portfolio.accounts.keys())
+                }
+            )
         elif action == 'get_cash':
             """注意此处为portfolio的cash/ 不是account的
             """
-            self.write({
-                'status': 200,
-                'result': portfolio.cash_available
-            })
+            self.write({'status': 200, 'result': portfolio.cash_available})
 
     def post(self):
         action = self.get_argument('action', default='add_account')
-        portfolio = self.get_portfolio(self.get_argument(
-            'user_cookie'), self.get_argument('portfolio_cookie'))
+        portfolio = self.get_portfolio(
+            self.get_argument('user_cookie'),
+            self.get_argument('portfolio_cookie')
+        )
 
 
 class RiskHandler(QABaseHandler):
