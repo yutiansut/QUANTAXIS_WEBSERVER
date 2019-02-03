@@ -213,18 +213,23 @@ class UserHandler(QABaseHandler):
 
         action = self.get_argument('action')
         wechat_id = self.get_argument('wechat_id', default=None)
-
-        if wechat_id is None:
+        model = self.get_argument('model', 'wechat')
+        if wechat_id is None and model == 'wechat':
             self.write({
                 'status':
                 404,
                 'result':
                 'no wechat id'
             })
-        else:
-            try:
 
+        else:
+            if model == 'password':
+                user = QA_User(username=self.get_argument(
+                    'username'), password=self.get_argument('password'))
+            else:
                 user = QA_User(wechat_id=wechat_id)
+
+            try:
                 if action == 'change_password':
                     user.password = str(
                         self.get_argument('password', '123456'))
