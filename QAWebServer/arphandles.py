@@ -133,11 +133,11 @@ class PortfolioHandler(QAWebSocketHandler):
 
     def get_portfolio(self, user_cookie, portfolio_cookie):
         """首先进行变量检查
-        
+
         Arguments:
             user_cookie {[type]} -- [description]
             portfolio_cookie {[type]} -- [description]
-        
+
         Returns:
             [type] -- [description]
         """
@@ -168,16 +168,8 @@ class PortfolioHandler(QAWebSocketHandler):
 
             res = []
             for account in portfolio.accounts.values():
-                
-                res.append(
-                    [
-                        account.portfolio_cookie,
-                        account.account_cookie,
-                        str(account.start_date),
-                        str(account.end_date),
-                        account.market_type
-                    ]
-                )
+
+                res.append(account.message)
             self.write(
                 {
                     'status': 200,

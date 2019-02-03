@@ -54,7 +54,7 @@ class SignupHandler(QABaseHandler):
         username = self.get_argument('user', default='admin')
         password = self.get_argument('password', default='admin')
         if QA_user_sign_up(username, password, DATABASE):
-            user= QA_User(username=username, password= password)
+            user = QA_User(username=username, password=password)
             user.save()
             self.write('SUCCESS')
         else:
@@ -201,7 +201,7 @@ class UserHandler(QABaseHandler):
                         'status': 404,
                         'result': str(e)
                     })
-            elif action =='get_nodeview':
+            elif action == 'get_nodeview':
                 self.write({
                     'status': 200,
                     'result': user.node_view
