@@ -194,9 +194,11 @@ class PortfolioHandler(QAWebSocketHandler):
             self.get_argument('user_cookie'),
             self.get_argument('portfolio_cookie')
         )
-
-        portfolio.drop_account(self.get_argument('account_cookie'))
-
+        try:
+            if portfolio.drop_account(self.get_argument('account_cookie')):
+                self.write({'status': 200})
+        except:
+            self.write({'status': 404})
 class RiskHandler(QABaseHandler):
     """
     回测账户的风险评价
