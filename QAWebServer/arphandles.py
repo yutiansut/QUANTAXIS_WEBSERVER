@@ -187,18 +187,13 @@ class PortfolioHandler(QAWebSocketHandler):
             self.get_argument('user_cookie'),
             self.get_argument('portfolio_cookie')
         )
-
-    def delete(self):
-        action = self.get_argument('action', default='delete_account')
-        portfolio = self.get_portfolio(
-            self.get_argument('user_cookie'),
-            self.get_argument('portfolio_cookie')
-        )
-        try:
-            if portfolio.drop_account(self.get_argument('account_cookie')):
-                self.write({'status': 200})
-        except:
-            self.write({'status': 404})
+        if action is 'delete_account':
+            try:
+                if portfolio.drop_account(self.get_argument('account_cookie')):
+                    self.write({'status': 200})
+                    portfolio.save()
+            except:
+                self.write({'status': 404})
 class RiskHandler(QABaseHandler):
     """
     回测账户的风险评价

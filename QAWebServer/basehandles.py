@@ -61,7 +61,7 @@ class QABaseHandler(RequestHandler):
         self.set_header('Access-Control-Allow-Methods',
                         'POST, GET, OPTIONS, DELETE, PUT, PATCH')
         self.set_header('Access-Control-Allow-Headers',
-                        "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,HTTP2-Settings")
+                        "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With, XMLHttpRequest,HTTP2-Settings")
         self.set_header(
             'Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
         self.set_header('Server', 'QUANTAXISBACKEND')
