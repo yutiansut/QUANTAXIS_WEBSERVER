@@ -188,13 +188,30 @@ class PortfolioHandler(QAWebSocketHandler):
             self.get_argument('portfolio_cookie')
         )
 
+    def delete(self):
+        action = self.get_argument('action', default='delete_account')
+        portfolio = self.get_portfolio(
+            self.get_argument('user_cookie'),
+            self.get_argument('portfolio_cookie')
+        )
+
+        portfolio.drop_account(self.get_argument('account_cookie'))
 
 class RiskHandler(QABaseHandler):
     """
     回测账户的风险评价
+    实时评估函数
+
+    当我们给定一个 QA_Account/ QAPORTFOLIO中的
+
+
     """
 
     def get(self):
+
+
+
+        
         account_cookie = self.get_argument('account_cookie', default='admin')
 
         query_account = QA_fetch_risk({'account_cookie': account_cookie})
