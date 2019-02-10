@@ -183,15 +183,19 @@ class PortfolioHandler(QAWebSocketHandler):
 
     def post(self):
         action = self.get_argument('action', default='add_account')
+        print(action)
         portfolio = self.get_portfolio(
             self.get_argument('user_cookie'),
             self.get_argument('portfolio_cookie')
         )
-        if action is 'delete_account':
+        if action == 'delete_account':
+            print(portfolio)
+            print(self.get_argument('account_cookie'))
             try:
-                if portfolio.drop_account(self.get_argument('account_cookie')):
-                    self.write({'status': 200})
+                if portfolio.drop_account(self.get_argument('account_cookie')) == True:
+                    print('true')
                     portfolio.save()
+                    self.write({'status': 200})
             except:
                 self.write({'status': 404})
 class RiskHandler(QABaseHandler):
