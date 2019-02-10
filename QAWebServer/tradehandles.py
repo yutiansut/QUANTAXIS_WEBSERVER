@@ -110,7 +110,7 @@ null = None
 
 
 class AccModelHandler(QAWebSocketHandler):
-    port = QA_Portfolio()
+    port = QA_Portfolio(portfolio_cookie='trade_special')
     broker = [
         'haitong',
         'ths_moni',

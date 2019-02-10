@@ -54,6 +54,8 @@ class SignupHandler(QABaseHandler):
         username = self.get_argument('user', default='admin')
         password = self.get_argument('password', default='admin')
         if QA_user_sign_up(username, password, DATABASE):
+            user = QA_User(username=username, password=password)
+            user.save()
             self.write('SUCCESS')
         else:
             self.write('WRONG')
@@ -75,7 +77,7 @@ class SigninHandler(QABaseHandler):
 
         username = self.get_argument('user', default='admin')
         password = self.get_argument('password', default='admin')
-        res = QA_user_sign_in(username, password, DATABASE)
+        res = QA_user_sign_in(username, password)
         if res is not None:
             self.write('SUCCESS')
         else:
@@ -109,6 +111,8 @@ class UserHandler(QABaseHandler):
         subscribe_strategy: 订阅策略| strategy_id={} | last={} | cost_coins={}
         unsubscribe_strategy: 取消订阅策略| strategy_id={}
         subscribe_code: 订阅品种| code={}
+        change_wechatid: 修改wechat_id| wechat_id={}
+        get_nodeview: 查看节点信息
 
     #TODO
 
@@ -132,15 +136,21 @@ class UserHandler(QABaseHandler):
     def get(self):
         action = self.get_argument('action', default='query')
         wechat_id = self.get_argument('wechat_id', default=None)
-        if wechat_id is None:
+        model = self.get_argument('model', 'wechat')
+        if wechat_id is None and model == 'wechat':
             self.write({
                 'status':
                 404,
                 'result':
                 'no wechat id'
             })
+
         else:
-            user = QA_User(wechat_id=wechat_id)
+            if model == 'password':
+                user = QA_User(username=self.get_argument(
+                    'username'), password=self.get_argument('password'))
+            else:
+                user = QA_User(wechat_id=wechat_id)
 
             if action == 'query':
                 self.write({"result": user.message})
@@ -152,7 +162,8 @@ class UserHandler(QABaseHandler):
                             'status':
                             200,
                             'result':
-                            QA_util_to_json_from_pandas(user.subscribing_strategy)
+                            QA_util_to_json_from_pandas(
+                                user.subscribing_strategy)
                         }
                     )
                 elif status == 'all':
@@ -161,9 +172,40 @@ class UserHandler(QABaseHandler):
                             'status':
                             200,
                             'result':
-                            QA_util_to_json_from_pandas(user.subscribed_strategy)
+                            QA_util_to_json_from_pandas(
+                                user.subscribed_strategy)
                         }
                     )
+            elif action == 'query_portfolio':
+                """获取某个user下的所有portfolio
+
+                """
+                self.write({
+                    'status': 200,
+                    'result': user.portfolio_list
+                })
+            elif action == 'get_portfolio':
+                """
+                ?portfolio = xxxx
+
+                这里主要展示这个portfolio的信息
+                如果需要具体对portfolio进行控制, 则在aprhandlers.portfolio_handler中
+                """
+                try:
+                    self.write({
+                        'status': 200,
+                        'result': user.get_portfolio(self.get_argument('portfolio')).message
+                    })
+                except Exception as e:
+                    self.write({
+                        'status': 404,
+                        'result': str(e)
+                    })
+            elif action == 'get_nodeview':
+                self.write({
+                    'status': 200,
+                    'result': user.node_view
+                })
 
     def post(self):
         """动作修改
@@ -171,23 +213,31 @@ class UserHandler(QABaseHandler):
 
         action = self.get_argument('action')
         wechat_id = self.get_argument('wechat_id', default=None)
-        if wechat_id is None:
+        model = self.get_argument('model', 'wechat')
+        if wechat_id is None and model == 'wechat':
             self.write({
                 'status':
                 404,
                 'result':
                 'no wechat id'
             })
-        else:
-            try:
 
+        else:
+            if model == 'password':
+                user = QA_User(username=self.get_argument(
+                    'username'), password=self.get_argument('password'))
+            else:
                 user = QA_User(wechat_id=wechat_id)
+
+            try:
                 if action == 'change_password':
-                    user.password = str(self.get_argument('password','123456'))
+                    user.password = str(
+                        self.get_argument('password', '123456'))
                 if action == 'change_name':
-                    user.username = str(self.get_argument('username','default_name'))
+                    user.username = str(self.get_argument(
+                        'username', 'default_name'))
                 elif action == 'change_phone':
-                    user.phone = str(self.get_argument('phone','123456789'))
+                    user.phone = str(self.get_argument('phone', '123456789'))
                 elif action == 'change_coins':
                     user.coins = float(self.get_argument('coins'))
                 elif action == 'subscribe_strategy':
@@ -200,6 +250,11 @@ class UserHandler(QABaseHandler):
                     user.unsubscribe_stratgy(self.get_argument('strategy_id'))
                 elif action == 'subscribe_code':
                     user.sub_code(self.get_argument('code'))
+                elif action == 'add_portfolio':
+                    user.new_portfolio(
+                        portfolio_cookie=self.get_argument('portfolio'))
+                elif action == 'change_wechatid':
+                    user.wechat_id = self.get_argument('wechat_id')
                 user.save()
                 #
                 self.write({'status': 200})

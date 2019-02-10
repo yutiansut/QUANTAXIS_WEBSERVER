@@ -27,7 +27,7 @@ import tornado
 
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.options import define, parse_command_line, parse_config_file, options
-from QAWebServer.arphandles import (AccountHandler, MemberHandler, RiskHandler)
+from QAWebServer.arphandles import (AccountHandler, MemberHandler, RiskHandler, PortfolioHandler)
 from QAWebServer.basehandles import QABaseHandler
 from QAWebServer.commandhandler import CommandHandler, RunnerHandler
 from QAWebServer.datahandles import (
@@ -75,9 +75,9 @@ term_manager = SingleTermManager(shell_command=['bash'])
 handlers = [
     (r"/",
      INDEX),
-                                 # (r"/websocket", TermSocket, {'term_manager': term_manager}),
-                                 # (r"/()", tornado.web.StaticFileHandler, {'path':'index.html'}),
-                                 # (r"/(.*)", tornado.web.StaticFileHandler, {'path':'.'}),
+    # (r"/websocket", TermSocket, {'term_manager': term_manager}),
+    # (r"/()", tornado.web.StaticFileHandler, {'path':'index.html'}),
+    # (r"/(.*)", tornado.web.StaticFileHandler, {'path':'.'}),
     (r"/marketdata/stock/day",
      StockdayHandler),
     (r"/marketdata/stock/min",
@@ -94,6 +94,8 @@ handlers = [
      SignupHandler),
     (r"/user",
      UserHandler),
+    (r"/portfolio",
+     PortfolioHandler),
     (r"/user/blocksetting",
      PersonBlockHandler),
     (r"/strategy/content",
@@ -160,7 +162,8 @@ def main():
     # print(options.content)
     #http_server = tornado.httpserver.HTTPServer(apps)
     http_server = Server(apps)
-    print(port)
+    print('QUANTAXIS WEBSERVER is Listening on: http://localhost:{}'.format(port))
+    print('请打开浏览器/使用JavaScript等来使用该后台, 并且不要关闭当前命令行窗口')
     http_server.bind(port, address=options.address)
     """增加了对于非windows下的机器多进程的支持
     """
