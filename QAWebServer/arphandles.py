@@ -141,8 +141,14 @@ class PortfolioHandler(QAWebSocketHandler):
 
             res = []
             for account in portfolio.accounts.values():
-
-                res.append(account.message)
+                res.append({
+                    'account_cookie': account.account_cookie,
+                    'portfolio_cookie': account.portfolio_cookie,
+                    'init_cash': account.init_cash,
+                    'market_type': account.market_type,
+                    'start': account.start_date,
+                    'end': account.end_date
+                })
             self.write(
                 {
                     'status': 200,
