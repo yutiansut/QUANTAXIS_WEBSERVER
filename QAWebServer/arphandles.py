@@ -41,42 +41,6 @@ from QUANTAXIS.QAUtil.QASetting import DATABASE
 from QUANTAXIS.QAUtil.QASql import QA_util_sql_mongo_setting
 
 
-class MemberHandler(QABaseHandler):
-    """
-    获得所有的回测member
-    """
-
-    def get(self):
-        """
-        采用了get_arguents来获取参数
-        默认参数: code-->000001 start-->2017-01-01 09:00:00 end-->now
-        accounts?account_cookie=xxx
-        """
-        #account_cookie= self.get_argument('account_cookie', default='admin')
-
-        query_account = QA_fetch_account()
-        # data = [res for res in query_account]
-        if len(query_account) > 0:
-            #data = [QA.QA_Account().from_message(x) for x in query_account]
-            def warpper(x):
-                return str(x) if isinstance(x, datetime.datetime) else x
-
-            res = []
-            for item in query_account:
-                res.append(
-                    [
-                        item['portfolio_cookie'],
-                        item['account_cookie'],
-                        str(item['start_date']),
-                        str(item['end_date']),
-                        'market_type'
-                    ]
-                )
-
-            self.write({'result': res})
-        else:
-            self.write('WRONG')
-
 
 class AccountHandler(QABaseHandler):
     """
