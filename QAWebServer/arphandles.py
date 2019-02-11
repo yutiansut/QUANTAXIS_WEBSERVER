@@ -78,7 +78,7 @@ class AccountHandler(QABaseHandler):
         if action == 'query_history':
             self.write({
                 'status': 200,
-                'res': acc.history
+                'result': acc.history
             })
 
 
