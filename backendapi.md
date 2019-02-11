@@ -140,19 +140,8 @@ router.get('*', function (req, res, next) {
 ##  4. 必须实现的部分
 
 
-###  4.1. 用户管理 /user
+### 用户 /user
 
-####  4.1.1.登陆
-```
-http://[ip]:[port]/users/login?name=[]&password=[]
-```
-####  4.1.2. 注册
-```
-http://[ip]:[port]/users/signup?name=[]&password=[]
-```
-
-
-#### 4.1.3 账户模型
 ```
     GET:
 
@@ -179,11 +168,7 @@ http://[ip]:[port]/users/signup?name=[]&password=[]
         unsubscribe_strategy: 取消订阅策略| strategy_id={}
         subscribe_code: 订阅品种| code={}
 
-    #TODO
-
-    action:
         new_portfolio
-        new_account
 
 
     DELETE
@@ -259,17 +244,44 @@ http://[ip]:[port]/users/signup?name=[]&password=[]
     }
 }
 ```
-###  4.2. 回测部分 /backtest
 
-####  4.2.1. 回测概览(列表查询)
+### 组合 /portfolio
+
 ```
-http://[ip]:[port]/backtest/list?user=[]
+    GET:
+    http://ip:port/portfolio?action={}&username={}&password={}&{}{}{}
+
+    params:
+        action:
+
+            - get_accounts(默认)
+            - get_cash
+
+        portfolio_cookie (必须项)
+        user_cookie (必须项)
+
+    POST:
+
+    http://ip:port/user?action={}&username={}&password={}&{}{}{}
+
+    action:
+        delete_account: 删除账户 | account_cookie
+
+
 ```
 
-####  4.2.2. 单个回测结果查询()
-```
-http://[ip]:[port]/backtest/info?cookie=[]
-```
+
+
+
+### 账户 /account
+
+
+
+
+
+### 交易 /trade
+
+
 
 ###  4.3. 行情查询部分 /marketdata & /data
 
@@ -343,7 +355,7 @@ http://[ip]:[port]/marketdata/future/min?code=[]&start=[]&end=[]
 
 5. data transport
 
-### 4.5 账户查询 /accounts
+
 
 
 #### 4.5.1 全部账户列表查询

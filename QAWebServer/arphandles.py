@@ -41,74 +41,47 @@ from QUANTAXIS.QAUtil.QASetting import DATABASE
 from QUANTAXIS.QAUtil.QASql import QA_util_sql_mongo_setting
 
 
-class MemberHandler(QABaseHandler):
-    """
-    获得所有的回测member
-    """
-
-    def get(self):
-        """
-        采用了get_arguents来获取参数
-        默认参数: code-->000001 start-->2017-01-01 09:00:00 end-->now
-        accounts?account_cookie=xxx
-        """
-        #account_cookie= self.get_argument('account_cookie', default='admin')
-
-        query_account = QA_fetch_account()
-        # data = [res for res in query_account]
-        if len(query_account) > 0:
-            #data = [QA.QA_Account().from_message(x) for x in query_account]
-            def warpper(x):
-                return str(x) if isinstance(x, datetime.datetime) else x
-
-            res = []
-            for item in query_account:
-                res.append(
-                    [
-                        item['portfolio_cookie'],
-                        item['account_cookie'],
-                        str(item['start_date']),
-                        str(item['end_date']),
-                        'market_type'
-                    ]
-                )
-
-            self.write({'result': res})
-        else:
-            self.write('WRONG')
-
-
 class AccountHandler(QABaseHandler):
     """
     对于某个回测账户
+    /account
+
+    param:
+
+        account_cookie
+        portfolio_cookie
+        user_cookie
+
+        action:
+            query_history
+            risk_analysis
+            performance_analysis
+            subscribe
+
     """
 
     def get(self):
         """
-        采用了get_arguents来获取参数
+        采用了get_arguent来获取参数
         默认参数: code-->000001 start-->2017-01-01 09:00:00 end-->now
         accounts?account_cookie=xxx
         """
-        account_cookie = self.get_argument('account_cookie', default='admin')
+        account_cookie = self.get_argument(
+            'account_cookie', default='quantaxis')
+        portfolio_cookie = self.get_argument('portfolio_cookie')
+        user_cookie = self.get_argument('user_cookie')
+        action = self.get_argument('action', 'query_history')
 
-        query_account = QA_fetch_account({'account_cookie': account_cookie})
-        #data = [QA_Account().from_message(x) for x in query_account]
-
-        if len(query_account) > 0:
-            #data = [QA.QA_Account().from_message(x) for x in query_account]
-            def warpper(x):
-                return str(x) if isinstance(x, datetime.datetime) else x
-
-            for item in query_account:
-                item['trade_index'] = list(map(str, item['trade_index']))
-                item['history'] = [
-                    list(map(warpper,
-                             itemd)) for itemd in item['history']
-                ]
-
-            self.write({'result': query_account})
-        else:
-            self.write('WRONG')
+        acc = QA_Account(account_cookie=account_cookie, user_cookie=user_cookie,
+                         portfolio_cookie=portfolio_cookie, auto_reload=True)
+        
+        if action == 'query_history':
+            self.write({
+                'status': 200,
+                'frequence': acc.frequence,
+                'market': acc.market_type,
+                'result': acc.history
+            })
 
 
 class PortfolioHandler(QAWebSocketHandler):
@@ -183,22 +156,23 @@ class PortfolioHandler(QAWebSocketHandler):
 
     def post(self):
         action = self.get_argument('action', default='add_account')
+        print(action)
         portfolio = self.get_portfolio(
             self.get_argument('user_cookie'),
             self.get_argument('portfolio_cookie')
         )
+        if action == 'delete_account':
+            print(portfolio)
+            print(self.get_argument('account_cookie'))
+            try:
+                if portfolio.drop_account(self.get_argument('account_cookie')) == True:
+                    print('true')
+                    portfolio.save()
+                    self.write({'status': 200})
+            except:
+                self.write({'status': 404})
 
-    def delete(self):
-        action = self.get_argument('action', default='delete_account')
-        portfolio = self.get_portfolio(
-            self.get_argument('user_cookie'),
-            self.get_argument('portfolio_cookie')
-        )
-        try:
-            if portfolio.drop_account(self.get_argument('account_cookie')):
-                self.write({'status': 200})
-        except:
-            self.write({'status': 404})
+
 class RiskHandler(QABaseHandler):
     """
     回测账户的风险评价
@@ -211,9 +185,6 @@ class RiskHandler(QABaseHandler):
 
     def get(self):
 
-
-
-        
         account_cookie = self.get_argument('account_cookie', default='admin')
 
         query_account = QA_fetch_risk({'account_cookie': account_cookie})

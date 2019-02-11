@@ -27,7 +27,7 @@ import tornado
 
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.options import define, parse_command_line, parse_config_file, options
-from QAWebServer.arphandles import (AccountHandler, MemberHandler, RiskHandler, PortfolioHandler)
+from QAWebServer.arphandles import (AccountHandler, RiskHandler, PortfolioHandler)
 from QAWebServer.basehandles import QABaseHandler
 from QAWebServer.commandhandler import CommandHandler, RunnerHandler
 from QAWebServer.datahandles import (
@@ -35,7 +35,8 @@ from QAWebServer.datahandles import (
     StockCodeHandler,
     StockdayHandler,
     StockminHandler,
-    StockPriceHandler
+    StockPriceHandler,
+    DataFetcher
 )
 from QAWebServer.quotationhandles import (
     MonitorSocketHandler,
@@ -82,6 +83,8 @@ handlers = [
      StockdayHandler),
     (r"/marketdata/stock/min",
      StockminHandler),
+    (r"/marketdata/fetcher",
+     DataFetcher),
     (r"/marketdata/stock/block",
      StockBlockHandler),
     (r"/marketdata/stock/price",
@@ -96,6 +99,8 @@ handlers = [
      UserHandler),
     (r"/portfolio",
      PortfolioHandler),
+    (r"/account",
+     AccountHandler),
     (r"/user/blocksetting",
      PersonBlockHandler),
     (r"/strategy/content",
@@ -112,10 +117,6 @@ handlers = [
      SimulateSocketHandler),
     (r"/monitor",
      MonitorSocketHandler),
-    (r"/accounts",
-     AccountHandler),
-    (r"/accounts/all",
-     MemberHandler),
     (r"/risk",
      RiskHandler),
     (r"/command/run",
