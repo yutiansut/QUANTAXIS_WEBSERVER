@@ -78,6 +78,8 @@ class AccountHandler(QABaseHandler):
         if action == 'query_history':
             self.write({
                 'status': 200,
+                'frequence': acc.frequence,
+                'market': acc.market_type,
                 'result': acc.history
             })
 
