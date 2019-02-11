@@ -33,6 +33,7 @@ from tornado.concurrent import Future
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.websocket import WebSocketHandler
 
+from QUANTAXIS.QAFetch.Fetcher import QA_quotation
 from QUANTAXIS.QAFetch.QAQuery import (QA_fetch_stock_day, QA_fetch_stock_min,
                                        QA_fetch_stock_to_market_date)
 from QUANTAXIS.QAFetch.QAQuery_Advance import (QA_fetch_stock_day_adv,
@@ -42,6 +43,48 @@ from QUANTAXIS.QAUtil.QASetting import DATABASE
 from QUANTAXIS.QAUtil.QATransform import QA_util_to_json_from_pandas
 from QAWebServer.basehandles import QABaseHandler
 from QAWebServer.fetch_block import get_block, get_name
+from QUANTAXIS.QAUtil.QAParameter import MARKET_TYPE, OUTPUT_FORMAT, DATASOURCE, FREQUENCE
+from QUANTAXIS.QAUtil.QADate_trade import QA_util_get_last_day, QA_util_get_real_date
+
+
+class DataFetcher(QABaseHandler):
+    def get(self):
+        """[summary]
+        
+        /fetcher
+
+        http://localhost:8010/marketdata/fetcher?code=RB1905&market=future_cn&end=2018-12-01&gap=20&frequence=15min
+
+        http://localhost:8010/marketdata/fetcher?code=000001&market=stock_cn&end=2018-12-01&gap=20&frequence=15min
+
+        
+        一个统一了多市场的多周期数据接口
+
+        param:
+            code
+            market
+            end
+            gap
+            frequence
+        """
+
+        code = self.get_argument('code', '000001')
+        market = self.get_argument('market', MARKET_TYPE.STOCK_CN)
+        end = self.get_argument('end', str(datetime.date.today))
+        gap = self.get_argument('gap', 50)
+        frequence = self.get_argument('frequence', FREQUENCE.FIFTEEN_MIN)
+        start = QA_util_get_last_day(QA_util_get_real_date(end), int(gap))
+
+        #print(code, start, end, frequence, market)
+        res = QA_quotation(code, start, end, frequence, market, source = DATASOURCE.MONGO, output = OUTPUT_FORMAT.DATASTRUCT )
+
+
+
+        return self.write({
+            'status': 200,
+            'result': res.to_json()
+        })
+
 
 
 class StockdayHandler(QABaseHandler):
