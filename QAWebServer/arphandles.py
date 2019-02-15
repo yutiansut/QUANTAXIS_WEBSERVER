@@ -82,6 +82,16 @@ class AccountHandler(QABaseHandler):
                 'market': acc.market_type,
                 'result': acc.history
             })
+        elif action  == 'query_performance':
+            self.write({
+                'res': 200,
+                'result': QA_Performance(acc).message
+            })
+        elif action == 'query_risk':
+            self.write({
+                'res': 200,
+                'result': QA_Risk(acc).message
+            })
 
 
 class PortfolioHandler(QAWebSocketHandler):
