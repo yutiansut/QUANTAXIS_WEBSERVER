@@ -66,6 +66,10 @@ class DataFetcher(QABaseHandler):
             end
             gap
             frequence
+
+        TODO:
+            source
+
         """
 
         code = self.get_argument('code', '000001')
@@ -74,9 +78,10 @@ class DataFetcher(QABaseHandler):
         gap = self.get_argument('gap', 50)
         frequence = self.get_argument('frequence', FREQUENCE.FIFTEEN_MIN)
         start = QA_util_get_last_day(QA_util_get_real_date(end), int(gap))
+        source = self.get_argument('source', DATASOURCE.MONGO)
 
         #print(code, start, end, frequence, market)
-        res = QA_quotation(code, start, end, frequence, market, source = DATASOURCE.MONGO, output = OUTPUT_FORMAT.DATASTRUCT )
+        res = QA_quotation(code, start, end, frequence, market, source = source, output = OUTPUT_FORMAT.DATASTRUCT )
 
 
 
@@ -201,6 +206,12 @@ class StockCodeHandler(QABaseHandler):
                 self.write(res['name'].encode('gbk'))
         except:
             self.write('wrong')
+
+
+
+class FutureHandler(QABaseHandler):
+    def get(self):
+        pass
 
 
 if __name__ == "__main__":
