@@ -56,7 +56,7 @@ class DataFetcher(QABaseHandler):
         http://localhost:8010/marketdata/fetcher?code=RB1905&market=future_cn&end=2018-12-01&gap=20&frequence=15min
 
         http://localhost:8010/marketdata/fetcher?code=000001&market=stock_cn&end=2018-12-01&gap=20&frequence=15min
-
+        http://localhost:8010/marketdata/fetcher?code=000001,000002&market=stock_cn&end=2018-12-01&gap=20&frequence=realtime&source=tdx
         
         一个统一了多市场的多周期数据接口
 
@@ -80,6 +80,12 @@ class DataFetcher(QABaseHandler):
         start = QA_util_get_last_day(QA_util_get_real_date(end), int(gap))
         source = self.get_argument('source', DATASOURCE.MONGO)
 
+        if len(code)>6:
+            try:
+                code = code.split(',')
+                print(code)
+            except:
+                code = code
         #print(code, start, end, frequence, market)
         res = QA_quotation(code, start, end, frequence, market, source = source, output = OUTPUT_FORMAT.DATASTRUCT )
         
