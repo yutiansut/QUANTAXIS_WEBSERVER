@@ -56,7 +56,7 @@ class DataFetcher(QABaseHandler):
         http://localhost:8010/marketdata/fetcher?code=RB1905&market=future_cn&end=2018-12-01&gap=20&frequence=15min
 
         http://localhost:8010/marketdata/fetcher?code=000001&market=stock_cn&end=2018-12-01&gap=20&frequence=15min
-
+        http://localhost:8010/marketdata/fetcher?code=000001,000002&market=stock_cn&end=2018-12-01&gap=20&frequence=realtime&source=tdx
         
         一个统一了多市场的多周期数据接口
 
@@ -66,6 +66,10 @@ class DataFetcher(QABaseHandler):
             end
             gap
             frequence
+
+        TODO:
+            source
+
         """
 
         code = self.get_argument('code', '000001')
@@ -74,10 +78,17 @@ class DataFetcher(QABaseHandler):
         gap = self.get_argument('gap', 50)
         frequence = self.get_argument('frequence', FREQUENCE.FIFTEEN_MIN)
         start = QA_util_get_last_day(QA_util_get_real_date(end), int(gap))
+        source = self.get_argument('source', DATASOURCE.MONGO)
 
+        if len(code)>6:
+            try:
+                code = code.split(',')
+                print(code)
+            except:
+                code = code
         #print(code, start, end, frequence, market)
-        res = QA_quotation(code, start, end, frequence, market, source = DATASOURCE.MONGO, output = OUTPUT_FORMAT.DATASTRUCT )
-
+        res = QA_quotation(code, start, end, frequence, market, source = source, output = OUTPUT_FORMAT.DATASTRUCT )
+        
 
 
         return self.write({
@@ -201,6 +212,12 @@ class StockCodeHandler(QABaseHandler):
                 self.write(res['name'].encode('gbk'))
         except:
             self.write('wrong')
+
+
+
+class FutureHandler(QABaseHandler):
+    def get(self):
+        pass
 
 
 if __name__ == "__main__":

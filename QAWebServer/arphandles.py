@@ -82,6 +82,16 @@ class AccountHandler(QABaseHandler):
                 'market': acc.market_type,
                 'result': acc.history
             })
+        elif action  == 'query_performance':
+            self.write({
+                'res': 200,
+                'result': QA_Performance(acc).message
+            })
+        elif action == 'query_risk':
+            self.write({
+                'res': 200,
+                'result': QA_Risk(acc).message
+            })
 
 
 class PortfolioHandler(QAWebSocketHandler):
@@ -141,8 +151,14 @@ class PortfolioHandler(QAWebSocketHandler):
 
             res = []
             for account in portfolio.accounts.values():
-
-                res.append(account.message)
+                res.append({
+                    'account_cookie': account.account_cookie,
+                    'portfolio_cookie': account.portfolio_cookie,
+                    'init_cash': account.init_cash,
+                    'market_type': account.market_type,
+                    'start': account.start_date,
+                    'end': account.end_date
+                })
             self.write(
                 {
                     'status': 200,

@@ -55,6 +55,7 @@ from QAWebServer.userhandles import (
 from QAWebServer.jobhandler import JOBHandler
 from tornado_http2.server import Server
 from QUANTAXIS.QAUtil.QASetting import QASETTING
+from QUANTAXIS import __version__
 from terminado import TermSocket, SingleTermManager
 
 
@@ -163,6 +164,8 @@ def main():
     # print(options.content)
     #http_server = tornado.httpserver.HTTPServer(apps)
     http_server = Server(apps)
+    print('========WELCOME QUANTAXIS_WEBSERVER============')
+    print('QUANTAXIS VERSION: {}'.format(__version__))
     print('QUANTAXIS WEBSERVER is Listening on: http://localhost:{}'.format(port))
     print('请打开浏览器/使用JavaScript等来使用该后台, 并且不要关闭当前命令行窗口')
     http_server.bind(port, address=options.address)
