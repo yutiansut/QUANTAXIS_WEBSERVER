@@ -82,7 +82,7 @@ class DataFetcher(QABaseHandler):
 
         #print(code, start, end, frequence, market)
         res = QA_quotation(code, start, end, frequence, market, source = source, output = OUTPUT_FORMAT.DATASTRUCT )
-
+        
 
 
         return self.write({
