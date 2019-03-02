@@ -84,13 +84,22 @@ class AccountHandler(QABaseHandler):
             })
         elif action  == 'query_performance':
             self.write({
-                'res': 200,
+                'status': 200,
                 'result': QA_Performance(acc).message
             })
         elif action == 'query_risk':
             self.write({
-                'res': 200,
+                'status': 200,
                 'result': QA_Risk(acc).message
+            })
+        elif action == 'query_position':
+            self.write({
+                'status': 200,
+                'result': {
+                    'hold': acc.hold.to_dict(),
+                    'cash_available': acc.cash_available,
+                    'frozen': acc.frozen
+                }
             })
 
 
