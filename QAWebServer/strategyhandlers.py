@@ -78,8 +78,8 @@ class BacktestHandler(QABaseHandler):
             return
         try:
             with open('{}{}{}.py'.format(cache_path, os.sep, backtest_name), 'r', encoding='utf-8') as f:
-                res = f.read()
-                self.write(res)
+                res = str(f.read())
+                self.write({'result':res})
         except Exception as e:
             self.write('wrong')
 

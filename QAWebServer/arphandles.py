@@ -84,13 +84,22 @@ class AccountHandler(QABaseHandler):
             })
         elif action  == 'query_performance':
             self.write({
-                'res': 200,
+                'status': 200,
                 'result': QA_Performance(acc).message
             })
         elif action == 'query_risk':
             self.write({
-                'res': 200,
+                'status': 200,
                 'result': QA_Risk(acc).message
+            })
+        elif action == 'query_position':
+            self.write({
+                'status': 200,
+                'result': {
+                    'hold': acc.hold.to_dict(),
+                    'cash_available': acc.cash_available,
+                    'frozen': acc.frozen
+                }
             })
 
 
@@ -173,17 +182,20 @@ class PortfolioHandler(QAWebSocketHandler):
     def post(self):
         action = self.get_argument('action', default='add_account')
         print(action)
+        user_cookie = self.get_argument('user_cookie')
+        portfolio_cookie = self.get_argument('portfolio_cookie')
+        account_cookie = self.get_argument('account_cookie')
+
         portfolio = self.get_portfolio(
-            self.get_argument('user_cookie'),
-            self.get_argument('portfolio_cookie')
+            user_cookie,
+            portfolio_cookie
         )
         if action == 'delete_account':
-            print(portfolio)
-            print(self.get_argument('account_cookie'))
             try:
-                if portfolio.drop_account(self.get_argument('account_cookie')) == True:
+                if portfolio.drop_account(account_cookie) == True:
                     print('true')
                     portfolio.save()
+                    DATABASE.risk.find_one_and_delete({'account_cookie':account_cookie, 'portfolio_cookie': portfolio_cookie, 'user_cookie': user_cookie})
                     self.write({'status': 200})
             except:
                 self.write({'status': 404})
@@ -201,9 +213,14 @@ class RiskHandler(QABaseHandler):
 
     def get(self):
 
-        account_cookie = self.get_argument('account_cookie', default='admin')
+        account_cookie = self.get_argument('account_cookie', default=False)
+        portfolio_cookie = self.get_argument('portfolio_cookie')
+        user_cookie = self.get_argument('user_cookie')
 
-        query_account = QA_fetch_risk({'account_cookie': account_cookie})
+        if account_cookie:
+            query_account = QA_fetch_risk({'account_cookie': account_cookie, 'portfolio_cookie': portfolio_cookie, 'user_cookie': user_cookie})
+        else:
+            query_account = QA_fetch_risk({'portfolio_cookie': portfolio_cookie, 'user_cookie': user_cookie})
         #data = [QA_Account().from_message(x) for x in query_account]
         if len(query_account) > 0:
             #data = [QA.QA_Account().from_message(x) for x in query_account]
