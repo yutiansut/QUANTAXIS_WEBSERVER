@@ -13,7 +13,7 @@ QUANTAXIS的持久化及后端解决方案
 ## install
 ```
 pip install https://github.com/yutiansut/tornado_http2/archive/master.zip
-
+pip install tornado==5.1.1
 pip install quantaxis_webserver
 ```
 ## API
