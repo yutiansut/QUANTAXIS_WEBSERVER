@@ -41,7 +41,7 @@ setup(
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
     ],
-    install_requires=['quantaxis_run>=1.3',
+    install_requires=['quantaxis_run>=1.5',
                       'quantaxis>=1.3.0', 'terminado'],
     entry_points={
         'console_scripts': [
