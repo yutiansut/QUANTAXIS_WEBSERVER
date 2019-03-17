@@ -35,7 +35,7 @@ class JOBHandler(QABaseHandler):
 
     def post(self):
         try:
-            from quantaxis_run import quantaxis_run, quantaxis_run_justshell
+            from quantaxis_run import quantaxis_run, run_shell
         except:
             self.write('no quantaxis_run program on this server')
             return
@@ -49,10 +49,9 @@ class JOBHandler(QABaseHandler):
             self.write({'status': 'pending', 'job_id': str(res.id)})
 
         else:
-            res = quantaxis_run_justshell.delay(program)
-            self.write({'status': 'pending', 'job_id': str(res.id)})
 
-            #shell_cmd = 'python "{}"'.format(shell_cmd)
+            res = run_shell.delay(program)
+            self.write({'status': 'pending', 'job_id': str(res.id)})
 
     def get(self):
         try:
