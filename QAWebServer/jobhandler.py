@@ -34,8 +34,10 @@ class JOBHandler(QABaseHandler):
     """
 
     def post(self):
+        print('get job mapper asking')
         try:
-            from quantaxis_run import quantaxis_run
+            from quantaxis_run import quantaxis_run, run_shell
+            from quantaxis_unicorn import run_shell
         except:
             self.write('no quantaxis_run program on this server')
             return
@@ -49,9 +51,9 @@ class JOBHandler(QABaseHandler):
             self.write({'status': 'pending', 'job_id': str(res.id)})
 
         else:
-            self.write({'status': 'error'})
 
-            #shell_cmd = 'python "{}"'.format(shell_cmd)
+            res = run_shell.delay(program)
+            self.write({'status': 'pending', 'job_id': str(res.id)})
 
     def get(self):
         try:
@@ -63,21 +65,13 @@ class JOBHandler(QABaseHandler):
         if job_id == 'all':
             self.write(
                 {
-                    'result': [
-                        QA_util_dict_remove_key(item,
-                                                '_id')
-                        for item in query_result()
-                    ]
+                    'result': query_result()
                 }
             )
         else:
             self.write(
                 {
-                    'result': [
-                        QA_util_dict_remove_key(item,
-                                                '_id')
-                        for item in query_onejob(job_id)
-                    ]
+                    'result': query_onejob(job_id)
                 }
             )
 

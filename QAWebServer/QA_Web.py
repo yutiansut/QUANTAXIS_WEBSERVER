@@ -29,7 +29,7 @@ from tornado.web import Application, RequestHandler, authenticated
 from tornado.options import define, parse_command_line, parse_config_file, options
 from QAWebServer.arphandles import (AccountHandler, RiskHandler, PortfolioHandler)
 from QAWebServer.basehandles import QABaseHandler
-from QAWebServer.commandhandler import CommandHandler, RunnerHandler
+from QAWebServer.commandhandler import CommandHandler, RunnerHandler, CommandHandlerWS
 from QAWebServer.datahandles import (
     StockBlockHandler,
     StockCodeHandler,
@@ -122,6 +122,8 @@ handlers = [
      RiskHandler),
     (r"/command/run",
      CommandHandler),
+    (r"/command/runws",
+     CommandHandlerWS),
     (r"/command/runbacktest",
      RunnerHandler),
     (r"/command/jobmapper",

@@ -214,7 +214,6 @@ class StockCodeHandler(QABaseHandler):
             self.write('wrong')
 
 
-
 class FutureHandler(QABaseHandler):
     def get(self):
         pass
