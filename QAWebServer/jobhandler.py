@@ -37,7 +37,7 @@ class JOBHandler(QABaseHandler):
         print('get job mapper asking')
         try:
             from quantaxis_run import quantaxis_run, run_shell
-            from quantaxis_unicorn import run_shell
+            #from quantaxis_unicorn import run_shell
         except:
             self.write('no quantaxis_run program on this server')
             return
@@ -45,6 +45,7 @@ class JOBHandler(QABaseHandler):
         program = self.get_argument('program', 'python')
         files = self.get_argument('jobfile', False)
         if files:
+            print('x')
             #self.wirte({'QUANTAXIS RUN': files})
             res = quantaxis_run.delay(files, program)
             # DATABASE.joblist.insert({'program':program,'files':files,'status':'running','job_id':str(res.id)})
