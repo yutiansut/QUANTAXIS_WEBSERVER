@@ -52,7 +52,7 @@ from QAWebServer.userhandles import (
     UserHandler
 )
 
-from QAWebServer.jobhandler import JOBHandler
+from QAWebServer.jobhandler import JOBHandler, FileHandler
 from tornado_http2.server import Server
 from QUANTAXIS.QAUtil.QASetting import QASETTING
 from QUANTAXIS import __version__
@@ -127,7 +127,9 @@ handlers = [
     (r"/command/runbacktest",
      RunnerHandler),
     (r"/command/jobmapper",
-     JOBHandler)
+     JOBHandler),
+    (r"/command/filemapper",
+     FileHandler)
 ]
 
 

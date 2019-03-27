@@ -2,13 +2,14 @@ import json
 import os
 import shlex
 import subprocess
-
+import uuid
 import tornado
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.websocket import WebSocketHandler
 
 from QAWebServer.basehandles import QABaseHandler, QAWebSocketHandler
 from QUANTAXIS.QAUtil.QADict import QA_util_dict_remove_key
+from QUANTAXIS.QASetting import cache_path
 """JOBHANDLER专门负责任务的部署和状态的查看
 
 uri 路径
@@ -54,6 +55,54 @@ class JOBHandler(QABaseHandler):
 
             res = run_shell.delay(program)
             self.write({'status': 'pending', 'job_id': str(res.id)})
+
+    def get(self):
+        try:
+            from quantaxis_run.query import query_result, query_onejob
+        except:
+            self.write('no quantaxis_run program on this server')
+            return
+        job_id = self.get_argument('job_id', 'all')
+        if job_id == 'all':
+            self.write(
+                {
+                    'result': query_result()
+                }
+            )
+        else:
+            self.write(
+                {
+                    'result': query_onejob(job_id)
+                }
+            )
+class FileHandler(QABaseHandler):
+    """job handler
+
+    Arguments:
+        QABaseHandler {[type]} -- [description]
+    """
+
+    def post(self):
+        print('get job mapper asking')
+        try:
+            from quantaxis_run import quantaxis_run
+        except:
+            self.write('no quantaxis_run program on this server')
+            return
+
+        program = self.get_argument('program', 'python')
+        content = self.get_argument('content')
+
+        files = '{}{}_{}.py'.format(cache_path,os.sep,uuid.uuid4())
+        with open(files,'w') as w:
+            w.write(content)
+
+        #self.wirte({'QUANTAXIS RUN': files})
+        res = quantaxis_run.delay(files, program)
+        # DATABASE.joblist.insert({'program':program,'files':files,'status':'running','job_id':str(res.id)})
+        self.write({'status': 'pending', 'job_id': str(res.id)})
+
+
 
     def get(self):
         try:
