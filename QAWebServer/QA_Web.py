@@ -139,6 +139,7 @@ def main():
 
     define("address", default='0.0.0.0', type=str, help='服务器地址')
     define("content", default=[], type=str, multiple=True, help="控制台输出内容")
+    
     parse_command_line()
     apps = Application(
         handlers=handlers,
@@ -146,24 +147,25 @@ def main():
         autoreload=True,
         compress_response=True
     )
+    port = options.port
 
-    try:
-        port = QASETTING.get_config(
-            'WEBSERVICE',
-            'port',
-            default_value=options.port
-        )
-        if port == options.port:
-            QASETTING.set_config(
-                'WEBSERVICE',
-                'port',
-                default_value=options.port
-            )
-        else:
-            options.port = port
-    except:
-        # #print(port)
-        QASETTING.set_config('WEBSERVICE', 'port', default_value=options.port)
+    # try:
+    #     port = QASETTING.get_config(
+    #         'WEBSERVICE',
+    #         'port',
+    #         default_value=options.port
+    #     )
+    #     if port == options.port:
+    #         QASETTING.set_config(
+    #             'WEBSERVICE',
+    #             'port',
+    #             default_value=options.port
+    #         )
+    #     else:
+    #         options.port = port
+    # except:
+    #     # #print(port)
+    #     QASETTING.set_config('WEBSERVICE', 'port', default_value=options.port)
 
     # print(options.content)
     #http_server = tornado.httpserver.HTTPServer(apps)
@@ -172,7 +174,7 @@ def main():
     print('QUANTAXIS VERSION: {}'.format(__version__))
     print('QUANTAXIS WEBSERVER is Listening on: http://localhost:{}'.format(port))
     print('请打开浏览器/使用JavaScript等来使用该后台, 并且不要关闭当前命令行窗口')
-    http_server.bind(port, address=options.address)
+    http_server.bind(port=options.port, address=options.address)
     """增加了对于非windows下的机器多进程的支持
     """
     http_server.start(1)
