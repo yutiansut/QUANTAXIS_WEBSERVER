@@ -218,7 +218,7 @@ class RiskHandler(QABaseHandler):
         user_cookie = self.get_argument('user_cookie')
 
         if account_cookie:
-            query_account = QA_fetch_risk({'account_cookie': account_cookie, 'portfolio_cookie': portfolio_cookie, 'user_cookie': user_cookie})
+            query_account = QA_fetch_risk({'account_cookie': account_cookie, 'portfolio_cookie': portfolio_cookie, 'user_cookie': user_cookie}, params={'_id':0})
         else:
             query_account = QA_fetch_risk({'portfolio_cookie': portfolio_cookie, 'user_cookie': user_cookie})
         #data = [QA_Account().from_message(x) for x in query_account]

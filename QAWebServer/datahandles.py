@@ -50,14 +50,14 @@ from QUANTAXIS.QAUtil.QADate_trade import QA_util_get_last_day, QA_util_get_real
 class DataFetcher(QABaseHandler):
     def get(self):
         """[summary]
-        
+
         /fetcher
 
         http://localhost:8010/marketdata/fetcher?code=RB1905&market=future_cn&end=2018-12-01&gap=20&frequence=15min
 
         http://localhost:8010/marketdata/fetcher?code=000001&market=stock_cn&end=2018-12-01&gap=20&frequence=15min
         http://localhost:8010/marketdata/fetcher?code=000001,000002&market=stock_cn&end=2018-12-01&gap=20&frequence=realtime&source=tdx
-        
+
         一个统一了多市场的多周期数据接口
 
         param:
@@ -77,25 +77,24 @@ class DataFetcher(QABaseHandler):
         end = self.get_argument('end', str(datetime.date.today))
         gap = self.get_argument('gap', 50)
         frequence = self.get_argument('frequence', FREQUENCE.FIFTEEN_MIN)
-        start = QA_util_get_last_day(QA_util_get_real_date(end), int(gap))
+        start = self.get_argument('start', QA_util_get_last_day(
+            QA_util_get_real_date(end), int(gap)))
         source = self.get_argument('source', DATASOURCE.MONGO)
 
-        if len(code)>6:
+        if len(code) > 6:
             try:
                 code = code.split(',')
                 print(code)
             except:
                 code = code
         #print(code, start, end, frequence, market)
-        res = QA_quotation(code, start, end, frequence, market, source = source, output = OUTPUT_FORMAT.DATASTRUCT )
-        
-
+        res = QA_quotation(code, start, end, frequence, market,
+                           source=source, output=OUTPUT_FORMAT.DATASTRUCT)
 
         return self.write({
             'status': 200,
             'result': res.to_json()
         })
-
 
 
 class StockdayHandler(QABaseHandler):
