@@ -16,6 +16,16 @@ pip install https://github.com/yutiansut/tornado_http2/archive/master.zip
 pip install tornado==5.1.1
 pip install quantaxis_webserver
 ```
+
+## 运行
+
+```
+命令行输入：
+
+quantaxis_webserver
+
+```
+
 ## API
 
 
