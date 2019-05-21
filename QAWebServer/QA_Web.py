@@ -30,6 +30,7 @@ from tornado.options import define, parse_command_line, parse_config_file, optio
 from QAWebServer.arphandles import (AccountHandler, RiskHandler, PortfolioHandler)
 from QAWebServer.basehandles import QABaseHandler
 from QAWebServer.commandhandler import CommandHandler, RunnerHandler, CommandHandlerWS
+from QAWebServer.filehandler import FileHandler
 from QAWebServer.datahandles import (
     StockBlockHandler,
     StockCodeHandler,
@@ -52,7 +53,7 @@ from QAWebServer.userhandles import (
     UserHandler
 )
 
-from QAWebServer.jobhandler import JOBHandler, FileHandler
+from QAWebServer.jobhandler import JOBHandler, FileRunHandler
 from tornado_http2.server import Server
 from QUANTAXIS.QAUtil.QASetting import QASETTING
 from QUANTAXIS import __version__
@@ -129,7 +130,9 @@ handlers = [
     (r"/command/jobmapper",
      JOBHandler),
     (r"/command/filemapper",
-     FileHandler)
+     FileRunHandler),
+    (r"/file",
+    FileHandler)
 ]
 
 

@@ -76,7 +76,7 @@ class JOBHandler(QABaseHandler):
                     'result': query_onejob(job_id)
                 }
             )
-class FileHandler(QABaseHandler):
+class FileRunHandler(QABaseHandler):
     """job handler
 
     Arguments:
