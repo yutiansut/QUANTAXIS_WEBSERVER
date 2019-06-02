@@ -102,7 +102,7 @@ class FileRunHandler(QABaseHandler):
             w.write(content)
 
         #self.wirte({'QUANTAXIS RUN': files})
-        res = quantaxis_run.delay(files, program)
+        res = quantaxis_run.delay(files, program, False)
         # DATABASE.joblist.insert({'program':program,'files':files,'status':'running','job_id':str(res.id)})
         self.write({'status': 'pending', 'job_id': str(res.id)})
 
