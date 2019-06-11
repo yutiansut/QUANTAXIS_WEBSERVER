@@ -13,15 +13,17 @@ from QUANTAXIS.QAUtil.QADict import QA_util_dict_remove_key
 
 
 class CommandHandler(QABaseHandler):
-    def get(self):
+    def post(self):
         try:
             command = self.get_argument('command')
             # print(command)
-            res = os.popen(command)
+            cmd = shlex.split(command)
+            p = subprocess.Popen(
+                cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             # print(res.read())
-            self.write({'result': res.read()})
-        except:
-            self.write({'result': 'wrong'})
+            self.write({'result': 'true'})
+        except Exception as e:
+            self.write({'result': 'wrong', 'reason': str(e)})
 
 class CommandHandlerWS(QAWebSocketHandler):
 
