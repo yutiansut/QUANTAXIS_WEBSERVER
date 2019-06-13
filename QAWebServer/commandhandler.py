@@ -10,21 +10,33 @@ from tornado.websocket import WebSocketHandler
 
 from QAWebServer.basehandles import QABaseHandler, QAWebSocketHandler
 from QUANTAXIS.QAUtil.QADict import QA_util_dict_remove_key
+import threading
+from QUANTAXIS.QAUtil import QA_util_log_info
+
+
+def background_task(command):
+    #command = self.get_argument('command')
+    cmd = shlex.split(command)
+    p = subprocess.Popen(
+        cmd, shell=False, close_fds=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    while p.poll() is None:
+        line = p.stdout.readline()
+        # QA.QA_util_log_info(line)
+    raise Exception
 
 
 class CommandHandler(QABaseHandler):
     def post(self):
         try:
             command = self.get_argument('command')
-            command = 'nohup ' + command+ ' &'
             # print(command)
-            cmd = shlex.split(command)
-            p = subprocess.Popen(
-                cmd, shell=False, close_fds=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            threading.Thread(target=background_task, args=(
+                command,), daemon=True).start()
             # print(res.read())
             self.write({'result': 'true'})
         except Exception as e:
             self.write({'result': 'wrong', 'reason': str(e)})
+
 
 class CommandHandlerWS(QAWebSocketHandler):
 
@@ -48,6 +60,7 @@ class CommandHandlerWS(QAWebSocketHandler):
 
     def on_close(self):
         pass
+
 
 class RunnerHandler(QAWebSocketHandler):
 
