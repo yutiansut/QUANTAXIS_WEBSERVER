@@ -16,6 +16,7 @@ class CommandHandler(QABaseHandler):
     def post(self):
         try:
             command = self.get_argument('command')
+            command = 'nohup ' + command+ ' &'
             # print(command)
             cmd = shlex.split(command)
             p = subprocess.Popen(
