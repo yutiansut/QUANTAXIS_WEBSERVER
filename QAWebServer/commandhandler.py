@@ -19,7 +19,7 @@ class CommandHandler(QABaseHandler):
             # print(command)
             cmd = shlex.split(command)
             p = subprocess.Popen(
-                cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                cmd, shell=False, close_fds=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             # print(res.read())
             self.write({'result': 'true'})
         except Exception as e:
