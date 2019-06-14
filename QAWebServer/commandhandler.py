@@ -32,7 +32,7 @@ class CommandHandler(QABaseHandler):
             # threading.Thread(target=background_task, args=(
             #     command,), daemon=True).start()
 
-            if command not in x.keys():
+            if command not in self.x.keys():
                 self.x[command] = background_task(command)
             else:
                 self.x[command].kill()
