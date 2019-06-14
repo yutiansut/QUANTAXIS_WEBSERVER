@@ -18,11 +18,7 @@ def background_task(command):
     #command = self.get_argument('command')
     cmd = shlex.split(command)
     p = subprocess.Popen(
-        cmd, shell=False, close_fds=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    # while p.poll() is None:
-    #     line = p.stdout.readline()
-    # QA.QA_util_log_info(line)
-    #raise Exception
+        cmd, shell=True,  stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     return p
 
 
@@ -32,7 +28,7 @@ class CommandHandler(QABaseHandler):
     def post(self):
         try:
             command = self.get_argument('command')
-            # print(command)
+            print(command)
             # threading.Thread(target=background_task, args=(
             #     command,), daemon=True).start()
 
