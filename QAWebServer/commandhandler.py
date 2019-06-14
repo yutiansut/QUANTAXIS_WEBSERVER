@@ -18,7 +18,7 @@ def background_task(command):
     #command = self.get_argument('command')
     cmd = shlex.split(command)
     p = subprocess.Popen(
-        cmd, shell=True,  stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        cmd, shell=False,  stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     return p
 
 
