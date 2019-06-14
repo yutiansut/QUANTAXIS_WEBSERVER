@@ -19,19 +19,28 @@ def background_task(command):
     cmd = shlex.split(command)
     p = subprocess.Popen(
         cmd, shell=False, close_fds=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    while p.poll() is None:
-        line = p.stdout.readline()
-        # QA.QA_util_log_info(line)
-    raise Exception
+    # while p.poll() is None:
+    #     line = p.stdout.readline()
+    # QA.QA_util_log_info(line)
+    #raise Exception
+    return p
 
 
 class CommandHandler(QABaseHandler):
+    x = {}
+
     def post(self):
         try:
             command = self.get_argument('command')
             # print(command)
-            threading.Thread(target=background_task, args=(
-                command,), daemon=True).start()
+            # threading.Thread(target=background_task, args=(
+            #     command,), daemon=True).start()
+
+            if command not in x.keys():
+                self.x[command] = background_task(command)
+            else:
+                self.x[command].kill()
+                self.x[command] = background_task(command)
             # print(res.read())
             self.write({'result': 'true'})
         except Exception as e:
