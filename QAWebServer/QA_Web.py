@@ -24,12 +24,13 @@
 import os
 import sys
 import tornado
-
+import asyncio
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.options import define, parse_command_line, parse_config_file, options
 from QAWebServer.arphandles import (AccountHandler, RiskHandler, PortfolioHandler)
 from QAWebServer.basehandles import QABaseHandler
 from QAWebServer.commandhandler import CommandHandler, RunnerHandler, CommandHandlerWS
+from QAWebServer.filehandler import FileHandler
 from QAWebServer.datahandles import (
     StockBlockHandler,
     StockCodeHandler,
@@ -52,7 +53,7 @@ from QAWebServer.userhandles import (
     UserHandler
 )
 
-from QAWebServer.jobhandler import JOBHandler, FileHandler
+from QAWebServer.jobhandler import JOBHandler, FileRunHandler
 from tornado_http2.server import Server
 from QUANTAXIS.QAUtil.QASetting import QASETTING
 from QUANTAXIS import __version__
@@ -129,12 +130,14 @@ handlers = [
     (r"/command/jobmapper",
      JOBHandler),
     (r"/command/filemapper",
-     FileHandler)
+     FileRunHandler),
+    (r"/file",
+    FileHandler)
 ]
 
 
 def main():
-
+    asyncio.set_event_loop(asyncio.new_event_loop())
     define("port", default=8010, type=int, help="服务器监听端口号")
 
     define("address", default='0.0.0.0', type=str, help='服务器地址')

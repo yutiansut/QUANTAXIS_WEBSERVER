@@ -10,18 +10,38 @@ from tornado.websocket import WebSocketHandler
 
 from QAWebServer.basehandles import QABaseHandler, QAWebSocketHandler
 from QUANTAXIS.QAUtil.QADict import QA_util_dict_remove_key
+import threading
+from QUANTAXIS.QAUtil import QA_util_log_info
+
+
+def background_task(command):
+    #command = self.get_argument('command')
+    cmd = shlex.split(command)
+    p = subprocess.Popen(
+        cmd, shell=False,  stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    return p
 
 
 class CommandHandler(QABaseHandler):
-    def get(self):
+    x = {}
+
+    def post(self):
         try:
             command = self.get_argument('command')
-            # print(command)
-            res = os.popen(command)
+            print(command)
+            # threading.Thread(target=background_task, args=(
+            #     command,), daemon=True).start()
+
+            if command not in self.x.keys():
+                self.x[command] = background_task(command)
+            else:
+                self.x[command].kill()
+                self.x[command] = background_task(command)
             # print(res.read())
-            self.write({'result': res.read()})
-        except:
-            self.write({'result': 'wrong'})
+            self.write({'result': 'true'})
+        except Exception as e:
+            self.write({'result': 'wrong', 'reason': str(e)})
+
 
 class CommandHandlerWS(QAWebSocketHandler):
 
@@ -45,6 +65,7 @@ class CommandHandlerWS(QAWebSocketHandler):
 
     def on_close(self):
         pass
+
 
 class RunnerHandler(QAWebSocketHandler):
 
