@@ -28,8 +28,8 @@ class CommandHandler(QABaseHandler):
     def post(self):
         try:
             command = self.get_argument('command')
-            print(command)
-            command = 'bash -c "nohup {} &"'.format(command)
+            #print(command)
+            command = 'bash -c "{}"'.format(command)
             print(command)
             # threading.Thread(target=background_task, args=(
             #     command,), daemon=True).start()
