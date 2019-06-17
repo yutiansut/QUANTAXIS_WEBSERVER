@@ -17,10 +17,12 @@ from QUANTAXIS.QAUtil import QA_util_log_info
 def background_task(command):
     #command = self.get_argument('command')
     cmd = shlex.split(command)
-    #subprocess.run(cmd)
-    threading.Thread(target=subprocess.run, args=(
-                    command,), daemon=True).start()
-
+    p = subprocess.Popen(
+        cmd, shell=False, close_fds=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    while p.poll() is None:
+        line = p.stdout.readline()
+        # QA.QA_util_log_info(line)
+    raise Exception
 
 class CommandHandler(QABaseHandler):
     x = {}
@@ -32,7 +34,8 @@ class CommandHandler(QABaseHandler):
             #command = 'bash -c "{}"'.format(command)
             print(command)
             
-            background_task(command)
+            threading.Thread(target=background_task, args=(
+                command,), daemon=True).start()
             # if command not in self.x.keys():
             #     self.x[command] = background_task(command)
             # else:
