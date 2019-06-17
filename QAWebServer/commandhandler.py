@@ -33,12 +33,10 @@ class CommandHandler(QABaseHandler):
             #     command,), daemon=True).start()
 
             if command not in self.x.keys():
-                self.x[command] = threading.Thread(target=background_task, args=(command,), daemon=True)
-                self.x[command].start()
+                self.x[command] = background_task(command)
             else:
-                self.x[command].stop()
-                self.x[command] = threading.Thread(target=background_task, args=(command,), daemon=True)
-                self.x[command].start()
+                self.x[command].kill()
+                self.x[command] = background_task(command)
             # print(res.read())
             self.write({'result': 'true'})
         except Exception as e:
