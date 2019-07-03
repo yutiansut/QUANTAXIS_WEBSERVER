@@ -28,6 +28,7 @@ class CommandHandler(QABaseHandler):
     x = {}
 
     def post(self):
+        print('get message')
         try:
             command = self.get_argument('command')
             #print(command)
