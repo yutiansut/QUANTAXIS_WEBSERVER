@@ -92,7 +92,8 @@ class FileRunHandler(QABaseHandler):
         print('get job mapper asking')
         try:
             from quantaxis_run import quantaxis_run
-        except:
+        except Exception as e:
+            print(e)
             self.write('no quantaxis_run program on this server')
             return
 
@@ -103,10 +104,7 @@ class FileRunHandler(QABaseHandler):
         files = '{}{}_{}.py'.format(cache_path, os.sep, title)
         with open(files, 'w') as w:
             w.write(content)
-
-        #self.wirte({'QUANTAXIS RUN': files})
         res = quantaxis_run.delay(files, program, False)
-        # DATABASE.joblist.insert({'program':program,'files':files,'status':'running','job_id':str(res.id)})
         self.write({'status': 'pending', 'job_id': str(res.id)})
 
     def get(self):
