@@ -57,7 +57,7 @@ class FileHandler(QABaseHandler):
                     'res': {}
                 })
         else:
-            with open('{}{}{}.py'.format(cache_path, os.sep, filename), 'r', encoding='utf-8') as f:
+            with open('{}{}_{}.py'.format(cache_path, os.sep, filename), 'r', encoding='utf-8') as f:
                 r = f.read()
 
             self.write({
