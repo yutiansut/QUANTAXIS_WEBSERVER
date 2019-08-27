@@ -10,7 +10,7 @@ class QAPositionHandler(QABaseHandler):
             self {[type]} -- [description]
         """
         action = self.get_argument('action', 'query_portfolio')
-        if action == 'query_portfolio'
+        if action == 'query_portfolio':
         portfolio = self.get_argument('portfolio')
          user = self.get_argument('user')
           res = []
