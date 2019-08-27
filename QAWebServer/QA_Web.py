@@ -49,6 +49,7 @@ from QAWebServer.strategyhandlers import BacktestHandler, StrategyHandler
 from QAWebServer.tradehandles import AccModelHandler, TradeInfoHandler
 from QAWebServer.userhandles import (PersonBlockHandler, SigninHandler,
                                      SignupHandler, UserHandler)
+from QAWebServer.qapositionshandlers import QAPositionHandler
 from QUANTAXIS import __version__
 from QUANTAXIS.QAUtil.QASetting import QASETTING
 
@@ -125,7 +126,8 @@ handlers = [
     (r"/command/filemapper",
      FileRunHandler),
     (r"/file",
-     FileHandler)
+     FileHandler),
+    (r"/positions", QAPositionHandler)
 ]
 
 
