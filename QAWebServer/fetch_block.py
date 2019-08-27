@@ -1,9 +1,11 @@
 # coding:utf-8
 
 
-import QUANTAXIS as QA
-import pandas as pd
 import re
+
+import pandas as pd
+
+import QUANTAXIS as QA
 
 
 def get_block(block):

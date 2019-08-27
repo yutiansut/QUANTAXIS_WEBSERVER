@@ -1,13 +1,15 @@
 # encoding=utf-8
-import win32serviceutil
-import win32service
-import win32event
-import winerror
+import inspect
+import logging
 import os
 import sys
-import logging
-import inspect
+
 import servicemanager
+import win32event
+import win32service
+import win32serviceutil
+import winerror
+
 from QAWebServer.QA_Web import main
 from QUANTAXIS.QASetting.QALocalize import log_path
 

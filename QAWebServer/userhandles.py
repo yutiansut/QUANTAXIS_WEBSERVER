@@ -29,12 +29,12 @@ import tornado
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.websocket import WebSocketHandler
 
-from QUANTAXIS.QASU.user import QA_user_sign_in, QA_user_sign_up
-from QUANTAXIS.QAARP import QA_User
-from QUANTAXIS.QAUtil.QASetting import DATABASE
-from QUANTAXIS.QAUtil import QA_util_to_json_from_pandas
-from QUANTAXIS.QAUtil.QASql import QA_util_sql_mongo_setting
 from QAWebServer.basehandles import QABaseHandler
+from QUANTAXIS.QAARP import QA_User
+from QUANTAXIS.QASU.user import QA_user_sign_in, QA_user_sign_up
+from QUANTAXIS.QAUtil import QA_util_to_json_from_pandas
+from QUANTAXIS.QAUtil.QASetting import DATABASE
+from QUANTAXIS.QAUtil.QASql import QA_util_sql_mongo_setting
 
 
 class SignupHandler(QABaseHandler):

@@ -29,6 +29,8 @@ import tornado
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.websocket import WebSocketHandler
 
+from QAWebServer.basehandles import QABaseHandler
+from QAWebServer.util import CJsonEncoder
 from QUANTAXIS.QAARP.QAAccount import QA_Account
 from QUANTAXIS.QAARP.QARisk import QA_Performance, QA_Risk
 from QUANTAXIS.QAFetch.QAQuery import (QA_fetch_account, QA_fetch_risk,
@@ -39,8 +41,6 @@ from QUANTAXIS.QASU.user import QA_user_sign_in, QA_user_sign_up
 from QUANTAXIS.QAUtil.QARandom import QA_util_random_with_topic
 from QUANTAXIS.QAUtil.QASetting import DATABASE
 from QUANTAXIS.QAUtil.QASql import QA_util_sql_mongo_setting
-from QAWebServer.basehandles import QABaseHandler
-from QAWebServer.util import CJsonEncoder
 
 
 class StrategyHandler(QABaseHandler):
@@ -79,7 +79,7 @@ class BacktestHandler(QABaseHandler):
         try:
             with open('{}{}{}.py'.format(cache_path, os.sep, backtest_name), 'r', encoding='utf-8') as f:
                 res = str(f.read())
-                self.write({'result':res})
+                self.write({'result': res})
         except Exception as e:
             self.write('wrong')
 

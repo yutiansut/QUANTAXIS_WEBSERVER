@@ -23,8 +23,10 @@
 # SOFTWARE.
 
 
-from QAWebServer.datahandles import StockdayHandler, StockminHandler, DataFetcher
-from QAWebServer.quotationhandles import RealtimeSocketHandler, SimulateSocketHandler
-from QAWebServer.userhandles import SigninHandler, SignupHandler, UserHandler
 from QAWebServer.basehandles import QABaseHandler, QAWebSocketHandler
+from QAWebServer.datahandles import (DataFetcher, StockdayHandler,
+                                     StockminHandler)
 from QAWebServer.QA_Web import main
+from QAWebServer.quotationhandles import (RealtimeSocketHandler,
+                                          SimulateSocketHandler)
+from QAWebServer.userhandles import SigninHandler, SignupHandler, UserHandler

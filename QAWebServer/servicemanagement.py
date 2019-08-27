@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: UTF8 -*-
 #
-import win32service
-import win32con
-import time, sys
 import datetime
+import sys
+import time
+
+import win32con
+import win32service
 
 
 class ServiceManager(object):
@@ -16,9 +18,9 @@ class ServiceManager(object):
         """
         self.name = name
 
-        #启动或停止服务时等待操作成功等待时间
+        # 启动或停止服务时等待操作成功等待时间
         self.wait_time = 0.5
-        #启动或停止服务时最大等待时间，超过时返回超时提示
+        # 启动或停止服务时最大等待时间，超过时返回超时提示
         self.delay_time = 10
         self.scm = win32service.OpenSCManager(
             None,
@@ -61,7 +63,7 @@ class ServiceManager(object):
         if status_info[1] == win32service.SERVICE_RUNNING:
             return '启动服务%s成功'.encode('gbk') % self.name
         elif status_info[1] == win32service.SERVICE_START_PENDING:
-            #如果服务正在启动中则延迟返回启动信息，直到启动成功,或返回启动时间过长信息
+            # 如果服务正在启动中则延迟返回启动信息，直到启动成功,或返回启动时间过长信息
             start_time = datetime.datetime.now()
             while True:
                 if (datetime.datetime.now() -
@@ -152,11 +154,11 @@ class ServiceManager(object):
 if __name__ == '__main__':
 
     app = ServiceManager('PythonService')
-    msg = app.is_exists() # 判断是否安装  （以下操作必须先判断服务是否存在）
-                          #msg= app.is_stop()  # 判断服务是否停止
-                          #msg= app.status()  # 查看服务的状态
-                          #msg= app.start()  # 开启服务
-                          #msg= app.stop()  # 暂停服务  （服务开启才能停止，else error）
-                          #msg= app.restart()  # 重启服务
+    msg = app.is_exists()  # 判断是否安装  （以下操作必须先判断服务是否存在）
+    # msg= app.is_stop()  # 判断服务是否停止
+    # msg= app.status()  # 查看服务的状态
+    # msg= app.start()  # 开启服务
+    # msg= app.stop()  # 暂停服务  （服务开启才能停止，else error）
+    # msg= app.restart()  # 重启服务
 
     print(msg)
