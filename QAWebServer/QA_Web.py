@@ -21,43 +21,36 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import asyncio
 import os
 import sys
+
 import tornado
-import asyncio
+from terminado import SingleTermManager, TermSocket
+from tornado.options import (define, options, parse_command_line,
+                             parse_config_file)
 from tornado.web import Application, RequestHandler, authenticated
-from tornado.options import define, parse_command_line, parse_config_file, options
-from QAWebServer.arphandles import (AccountHandler, RiskHandler, PortfolioHandler)
+from tornado_http2.server import Server
+
+from QAWebServer.arphandles import (AccountHandler, PortfolioHandler,
+                                    RiskHandler)
 from QAWebServer.basehandles import QABaseHandler
-from QAWebServer.commandhandler import CommandHandler, RunnerHandler, CommandHandlerWS
+from QAWebServer.commandhandler import (CommandHandler, CommandHandlerWS,
+                                        RunnerHandler)
+from QAWebServer.datahandles import (DataFetcher, StockBlockHandler,
+                                     StockCodeHandler, StockdayHandler,
+                                     StockminHandler, StockPriceHandler)
 from QAWebServer.filehandler import FileHandler
-from QAWebServer.datahandles import (
-    StockBlockHandler,
-    StockCodeHandler,
-    StockdayHandler,
-    StockminHandler,
-    StockPriceHandler,
-    DataFetcher
-)
-from QAWebServer.quotationhandles import (
-    MonitorSocketHandler,
-    RealtimeSocketHandler,
-    SimulateSocketHandler
-)
+from QAWebServer.jobhandler import FileRunHandler, JOBHandler
+from QAWebServer.quotationhandles import (MonitorSocketHandler,
+                                          RealtimeSocketHandler,
+                                          SimulateSocketHandler)
 from QAWebServer.strategyhandlers import BacktestHandler, StrategyHandler
 from QAWebServer.tradehandles import AccModelHandler, TradeInfoHandler
-from QAWebServer.userhandles import (
-    PersonBlockHandler,
-    SigninHandler,
-    SignupHandler,
-    UserHandler
-)
-
-from QAWebServer.jobhandler import JOBHandler, FileRunHandler
-from tornado_http2.server import Server
-from QUANTAXIS.QAUtil.QASetting import QASETTING
+from QAWebServer.userhandles import (PersonBlockHandler, SigninHandler,
+                                     SignupHandler, UserHandler)
 from QUANTAXIS import __version__
-from terminado import TermSocket, SingleTermManager
+from QUANTAXIS.QAUtil.QASetting import QASETTING
 
 
 class INDEX(QABaseHandler):
@@ -132,7 +125,7 @@ handlers = [
     (r"/command/filemapper",
      FileRunHandler),
     (r"/file",
-    FileHandler)
+     FileHandler)
 ]
 
 
@@ -142,7 +135,7 @@ def main():
 
     define("address", default='0.0.0.0', type=str, help='服务器地址')
     define("content", default=[], type=str, multiple=True, help="控制台输出内容")
-    
+
     parse_command_line()
     apps = Application(
         handlers=handlers,

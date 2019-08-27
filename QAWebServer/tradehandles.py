@@ -24,18 +24,23 @@
 
 import datetime
 import json
+
 import pandas as pd
-import tornado
 import pymongo
+import tornado
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.websocket import WebSocketHandler
-from QUANTAXIS.QAARP import QA_Account, QA_Portfolio, QA_User
+
 from QAWebServer.basehandles import QABaseHandler, QAWebSocketHandler
-from QUANTAXIS.QAMarket.QAShipaneBroker import QA_SPEBroker
-from QUANTAXIS.QAMarket.QABacktestBroker import QA_BacktestBroker
-from QUANTAXIS.QAUtil.QAParameter import ORDER_DIRECTION, ORDER_STATUS, ORDER_MODEL, AMOUNT_MODEL
+from QUANTAXIS.QAARP import QA_Account, QA_Portfolio, QA_User
 from QUANTAXIS.QAEngine.QAEvent import QA_Event
+from QUANTAXIS.QAMarket.QABacktestBroker import QA_BacktestBroker
+from QUANTAXIS.QAMarket.QAShipaneBroker import QA_SPEBroker
+from QUANTAXIS.QAUtil.QAParameter import (AMOUNT_MODEL, ORDER_DIRECTION,
+                                          ORDER_MODEL, ORDER_STATUS)
 from QUANTAXIS.QAUtil.QATransform import QA_util_to_json_from_pandas
+
+
 """
 GET http://localhost:8888/accounts
 GET http://localhost:8888/positions
@@ -222,7 +227,8 @@ class AccModelHandler(QAWebSocketHandler):
                     'account_cookie'], message['broker'], message['password'], message['tpassword'], message['server_ip']
 
                 if broker == 'quantaxis_backtest':
-                    self.account = self.port.new_account(account_cookie=account)
+                    self.account = self.port.new_account(
+                        account_cookie=account)
                     print(self.account.account_cookie)
 
                     z = {
@@ -240,7 +246,8 @@ class AccModelHandler(QAWebSocketHandler):
                     self.write_message(z)
                     print('fin write')
                 elif broker in ['ths_moni', 'tdx_moni']:
-                    self.account = self.port.new_account(account_cookie=account)
+                    self.account = self.port.new_account(
+                        account_cookie=account)
                 elif broker in ['simnow']:
 
                     pass

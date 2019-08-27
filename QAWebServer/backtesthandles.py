@@ -24,18 +24,19 @@
 
 
 import json
+
 import tornado
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.websocket import WebSocketHandler
 
-from QUANTAXIS.QAFetch.QAQuery import QA_fetch_account
-from QUANTAXIS.QASU.save_account import  save_account
+from QAWebServer.basehandles import QABaseHandler, QAWebSocketHandler
 from QUANTAXIS.QAARP.QAAccount import QA_Account
 from QUANTAXIS.QAARP.QARisk import QA_Performance, QA_Risk
+from QUANTAXIS.QAFetch.QAQuery import QA_fetch_account
+from QUANTAXIS.QASU.save_account import save_account
 from QUANTAXIS.QASU.user import QA_user_sign_in, QA_user_sign_up
 from QUANTAXIS.QAUtil.QASetting import DATABASE
 from QUANTAXIS.QAUtil.QASql import QA_util_sql_mongo_setting
-from QAWebServer.basehandles import QABaseHandler,QAWebSocketHandler
 
 
 """
@@ -45,8 +46,9 @@ from QAWebServer.basehandles import QABaseHandler,QAWebSocketHandler
 
 
 class BacktestHandler(QAWebSocketHandler):
-    
-    client={}
+
+    client = {}
+
     def open(self):
         self.client.add(self)
         self.write_message('realtime socket start')

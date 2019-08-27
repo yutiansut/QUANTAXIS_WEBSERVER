@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 
-from QAWebServer.basehandles import QARestHandler, get, post, put, delete
+from QAWebServer.basehandles import QARestHandler, delete, get, post, put
 from QAWebServer.util import APPLICATION_JSON
 from QUANTAXIS.QAARP import QA_Account
 
@@ -35,7 +35,3 @@ class AccountResource(QARestHandler):
         account.account_cookie = account_cookie
 
         return account.message
-
-
-
-

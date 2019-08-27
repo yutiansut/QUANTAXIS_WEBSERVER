@@ -33,18 +33,20 @@ from tornado.concurrent import Future
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.websocket import WebSocketHandler
 
+from QAWebServer.basehandles import QABaseHandler
+from QAWebServer.fetch_block import get_block, get_name
 from QUANTAXIS.QAFetch.Fetcher import QA_quotation
 from QUANTAXIS.QAFetch.QAQuery import (QA_fetch_stock_day, QA_fetch_stock_min,
                                        QA_fetch_stock_to_market_date)
 from QUANTAXIS.QAFetch.QAQuery_Advance import (QA_fetch_stock_day_adv,
                                                QA_fetch_stock_min_adv)
+from QUANTAXIS.QAUtil.QADate_trade import (QA_util_get_last_day,
+                                           QA_util_get_real_date)
 from QUANTAXIS.QAUtil.QADict import QA_util_dict_remove_key
+from QUANTAXIS.QAUtil.QAParameter import (DATASOURCE, FREQUENCE, MARKET_TYPE,
+                                          OUTPUT_FORMAT)
 from QUANTAXIS.QAUtil.QASetting import DATABASE
 from QUANTAXIS.QAUtil.QATransform import QA_util_to_json_from_pandas
-from QAWebServer.basehandles import QABaseHandler
-from QAWebServer.fetch_block import get_block, get_name
-from QUANTAXIS.QAUtil.QAParameter import MARKET_TYPE, OUTPUT_FORMAT, DATASOURCE, FREQUENCE
-from QUANTAXIS.QAUtil.QADate_trade import QA_util_get_last_day, QA_util_get_real_date
 
 
 class DataFetcher(QABaseHandler):

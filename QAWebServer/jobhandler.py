@@ -3,13 +3,16 @@ import os
 import shlex
 import subprocess
 import uuid
+
 import tornado
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.websocket import WebSocketHandler
 
 from QAWebServer.basehandles import QABaseHandler, QAWebSocketHandler
-from QUANTAXIS.QAUtil.QADict import QA_util_dict_remove_key
 from QUANTAXIS.QASetting import cache_path
+from QUANTAXIS.QAUtil.QADict import QA_util_dict_remove_key
+
+
 """JOBHANDLER专门负责任务的部署和状态的查看
 
 uri 路径

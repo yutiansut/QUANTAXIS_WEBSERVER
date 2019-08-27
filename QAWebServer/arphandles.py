@@ -74,7 +74,7 @@ class AccountHandler(QABaseHandler):
 
         acc = QA_Account(account_cookie=account_cookie, user_cookie=user_cookie,
                          portfolio_cookie=portfolio_cookie, auto_reload=True)
-        
+
         if action == 'query_history':
             self.write({
                 'status': 200,
@@ -82,7 +82,7 @@ class AccountHandler(QABaseHandler):
                 'market': acc.market_type,
                 'result': acc.history
             })
-        elif action  == 'query_performance':
+        elif action == 'query_performance':
             self.write({
                 'status': 200,
                 'result': QA_Performance(acc).message
@@ -195,7 +195,8 @@ class PortfolioHandler(QAWebSocketHandler):
                 if portfolio.drop_account(account_cookie) == True:
                     print('true')
                     portfolio.save()
-                    DATABASE.risk.find_one_and_delete({'account_cookie':account_cookie, 'portfolio_cookie': portfolio_cookie, 'user_cookie': user_cookie})
+                    DATABASE.risk.find_one_and_delete(
+                        {'account_cookie': account_cookie, 'portfolio_cookie': portfolio_cookie, 'user_cookie': user_cookie})
                     self.write({'status': 200})
             except:
                 self.write({'status': 404})
@@ -218,9 +219,11 @@ class RiskHandler(QABaseHandler):
         user_cookie = self.get_argument('user_cookie')
 
         if account_cookie:
-            query_account = QA_fetch_risk({'account_cookie': account_cookie, 'portfolio_cookie': portfolio_cookie, 'user_cookie': user_cookie}, params={'_id':0})
+            query_account = QA_fetch_risk(
+                {'account_cookie': account_cookie, 'portfolio_cookie': portfolio_cookie, 'user_cookie': user_cookie}, params={'_id': 0})
         else:
-            query_account = QA_fetch_risk({'portfolio_cookie': portfolio_cookie, 'user_cookie': user_cookie})
+            query_account = QA_fetch_risk(
+                {'portfolio_cookie': portfolio_cookie, 'user_cookie': user_cookie})
         #data = [QA_Account().from_message(x) for x in query_account]
         if len(query_account) > 0:
             #data = [QA.QA_Account().from_message(x) for x in query_account]
