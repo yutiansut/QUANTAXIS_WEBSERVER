@@ -26,7 +26,7 @@ import os
 import sys
 
 import tornado
-from terminado import SingleTermManager, TermSocket
+#from terminado import SingleTermManager, TermSocket
 from tornado.options import (define, options, parse_command_line,
                              parse_config_file)
 from tornado.web import Application, RequestHandler, authenticated
@@ -67,7 +67,7 @@ class INDEX(QABaseHandler):
         )
 
 
-term_manager = SingleTermManager(shell_command=['bash'])
+#term_manager = SingleTermManager(shell_command=['bash'])
 handlers = [
     (r"/",
      INDEX),
