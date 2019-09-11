@@ -26,7 +26,7 @@ import os
 import sys
 
 import tornado
-from terminado import SingleTermManager, TermSocket
+#from terminado import SingleTermManager, TermSocket
 from tornado.options import (define, options, parse_command_line,
                              parse_config_file)
 from tornado.web import Application, RequestHandler, authenticated
@@ -49,7 +49,6 @@ from QAWebServer.strategyhandlers import BacktestHandler, StrategyHandler
 from QAWebServer.tradehandles import AccModelHandler, TradeInfoHandler
 from QAWebServer.userhandles import (PersonBlockHandler, SigninHandler,
                                      SignupHandler, UserHandler)
-from QAWebServer.qapositionshandlers import QAPositionHandler
 from QUANTAXIS import __version__
 from QUANTAXIS.QAUtil.QASetting import QASETTING
 
@@ -68,7 +67,7 @@ class INDEX(QABaseHandler):
         )
 
 
-term_manager = SingleTermManager(shell_command=['bash'])
+#term_manager = SingleTermManager(shell_command=['bash'])
 handlers = [
     (r"/",
      INDEX),
@@ -126,8 +125,7 @@ handlers = [
     (r"/command/filemapper",
      FileRunHandler),
     (r"/file",
-     FileHandler),
-    (r"/positions", QAPositionHandler)
+     FileHandler)
 ]
 
 
