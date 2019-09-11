@@ -25,7 +25,7 @@ DESCRIPTION = "QUANTAXIS WEBSERVER: WEBSERVER FOR QUANTAXIS"
 KEYWORDS = ["quantaxis", "quant", "finance", "Backtest", 'Framework']
 AUTHOR_EMAIL = "yutiansut@qq.com"
 AUTHOR = 'yutiansut'
-URL = "https://github.com/yutiansut/quantaxis_run"
+URL = "https://github.com/yutiansut/quantaxis_webserver"
 
 
 LICENSE = "MIT"
