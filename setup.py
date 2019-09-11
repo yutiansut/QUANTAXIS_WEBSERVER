@@ -42,7 +42,7 @@ setup(
         'Operating System :: OS Independent',
     ],
     install_requires=['quantaxis_run>=1.5', 'tornado==5.1.1',
-                      'quantaxis>=1.5.3', 'terminado'],
+                      'quantaxis>=1.5.3'],
     dependency_links=['git@github.com/yutiansut/tornado_http2'],
     entry_points={
         'console_scripts': [
