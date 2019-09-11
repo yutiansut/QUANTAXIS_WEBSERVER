@@ -72,9 +72,6 @@ class INDEX(QABaseHandler):
 handlers = [
     (r"/",
      INDEX),
-    # (r"/websocket", TermSocket, {'term_manager': term_manager}),
-    # (r"/()", tornado.web.StaticFileHandler, {'path':'index.html'}),
-    # (r"/(.*)", tornado.web.StaticFileHandler, {'path':'.'}),
     (r"/marketdata/stock/day",
      StockdayHandler),
     (r"/marketdata/stock/min",
@@ -150,26 +147,7 @@ def main():
     )
     port = options.port
 
-    # try:
-    #     port = QASETTING.get_config(
-    #         'WEBSERVICE',
-    #         'port',
-    #         default_value=options.port
-    #     )
-    #     if port == options.port:
-    #         QASETTING.set_config(
-    #             'WEBSERVICE',
-    #             'port',
-    #             default_value=options.port
-    #         )
-    #     else:
-    #         options.port = port
-    # except:
-    #     # #print(port)
-    #     QASETTING.set_config('WEBSERVICE', 'port', default_value=options.port)
 
-    # print(options.content)
-    #http_server = tornado.httpserver.HTTPServer(apps)
     http_server = Server(apps)
     print('========WELCOME QUANTAXIS_WEBSERVER============')
     print('QUANTAXIS VERSION: {}'.format(__version__))
