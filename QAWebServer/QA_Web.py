@@ -44,7 +44,8 @@ from QAWebServer.filehandler import FileHandler
 from QAWebServer.jobhandler import FileRunHandler, JOBHandler
 from QAWebServer.quotationhandles import (MonitorSocketHandler,
                                           RealtimeSocketHandler,
-                                          SimulateSocketHandler)
+                                          SimulateSocketHandler,
+                                          future_realtime, stock_realtime)
 from QAWebServer.strategyhandlers import BacktestHandler, StrategyHandler
 from QAWebServer.tradehandles import AccModelHandler, TradeInfoHandler
 from QAWebServer.userhandles import (PersonBlockHandler, SigninHandler,
@@ -108,6 +109,10 @@ handlers = [
      TradeInfoHandler),
     (r"/realtime",
      RealtimeSocketHandler),
+    (r"/realtime/stock",
+     stock_realtime),
+    (r"/realtime/future",
+     future_realtime),
     (r"/simulate",
      SimulateSocketHandler),
     (r"/monitor",
