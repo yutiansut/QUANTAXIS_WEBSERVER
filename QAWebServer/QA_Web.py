@@ -37,7 +37,7 @@ from QAWebServer.arphandles import (AccountHandler, PortfolioHandler,
 from QAWebServer.basehandles import QABaseHandler
 from QAWebServer.commandhandler import (CommandHandler, CommandHandlerWS,
                                         RunnerHandler)
-from QAWebServer.datahandles import (DataFetcher, StockBlockHandler,
+from QAWebServer.datahandles import (DataFetcher, StockBlockHandler, CurrentListHandler,
                                      StockCodeHandler, StockdayHandler,
                                      StockminHandler, StockPriceHandler)
 from QAWebServer.filehandler import FileHandler
@@ -72,6 +72,8 @@ class INDEX(QABaseHandler):
 handlers = [
     (r"/",
      INDEX),
+    (r"/codelist",
+    CurrentListHandler),
     (r"/marketdata/stock/day",
      StockdayHandler),
     (r"/marketdata/stock/min",
