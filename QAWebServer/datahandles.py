@@ -32,12 +32,13 @@ from tornado import gen
 from tornado.concurrent import Future
 from tornado.web import Application, RequestHandler, authenticated
 from tornado.websocket import WebSocketHandler
-
+import pandas as pd
 from QAWebServer.basehandles import QABaseHandler
 from QAWebServer.fetch_block import get_block, get_name
 from QUANTAXIS.QAFetch.Fetcher import QA_quotation
 from QUANTAXIS.QAFetch.QAQuery import (QA_fetch_stock_day, QA_fetch_stock_min,
                                        QA_fetch_stock_to_market_date)
+from QUANTAXIS.QAFetch.QATdx import QA_fetch_get_future_list, QA_fetch_get_stock_list
 from QUANTAXIS.QAFetch.QAQuery_Advance import (QA_fetch_stock_day_adv,
                                                QA_fetch_stock_min_adv)
 from QUANTAXIS.QAUtil.QADate_trade import (QA_util_get_last_day,
@@ -220,14 +221,23 @@ class FutureHandler(QABaseHandler):
         pass
 
 
+class CurrentListHandler(QABaseHandler):
+    def get(self):
+        currentlist = pd.concat([QA_fetch_get_stock_list().assign(
+            market='stock_cn'), QA_fetch_get_future_list().assign(market='future_cn')], sort=False)
+        data = (currentlist.code + ' ' + currentlist.name + ' ' + currentlist.market).tolist()
+        self.write({'result': data})
+
+
 if __name__ == "__main__":
 
     app = Application(
         handlers=[
             (r"/stock/day", StockdayHandler),
-            (r"/stock/min", StockminHandler)
+            (r"/stock/min", StockminHandler),
+            (r'/codelist', CurrentListHandler)
         ],
         debug=True
     )
-    app.listen(8010)
+    app.listen(15201)
     tornado.ioloop.IOLoop.current().start()
