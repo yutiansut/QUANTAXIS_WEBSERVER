@@ -38,7 +38,7 @@ from QAWebServer.fetch_block import get_block, get_name
 from QUANTAXIS.QAFetch.Fetcher import QA_quotation
 from QUANTAXIS.QAFetch.QAQuery import (QA_fetch_stock_day, QA_fetch_stock_min,
                                        QA_fetch_stock_to_market_date)
-from QUANTAXIS.QAFetch.QATdx import QA_fetch_get_future_list, QA_fetch_get_stock_list, QA_fetch_get_usstock_list, QA_fetch_get_index_list
+from QUANTAXIS.QAFetch.QATdx import QA_fetch_get_future_list, QA_fetch_get_stock_list, QA_fetch_get_usstock_list, QA_fetch_get_index_list, QA_fetch_get_hkstock_list
 from QUANTAXIS.QAFetch.QAQuery_Advance import (QA_fetch_stock_day_adv,
                                                QA_fetch_stock_min_adv)
 from QUANTAXIS.QAUtil.QADate_trade import (QA_util_get_last_day,
