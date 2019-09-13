@@ -225,7 +225,7 @@ class CurrentListHandler(QABaseHandler):
     def get(self):
         currentlist = pd.concat([QA_fetch_get_stock_list().assign(
             market='stock_cn'), QA_fetch_get_future_list().assign(market='future_cn')], sort=False)
-        data = (currentlist.code + '$$' + currentlist.name + '$$' + currentlist.market).tolist()
+        data = (currentlist.code + '/' + currentlist.name + '/' + currentlist.market).tolist()
         self.write({'result': data})
 
 
