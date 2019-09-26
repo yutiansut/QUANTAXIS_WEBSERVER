@@ -35,6 +35,7 @@ from tornado.websocket import WebSocketHandler
 import pandas as pd
 from QAWebServer.basehandles import QABaseHandler
 from QAWebServer.fetch_block import get_block, get_name
+from QUANTAXIS.QAARP.market_preset import MARKET_PRESET
 from QUANTAXIS.QAFetch.Fetcher import QA_quotation
 from QUANTAXIS.QAFetch.QAQuery import (QA_fetch_stock_day, QA_fetch_stock_min,
                                        QA_fetch_stock_to_market_date)
@@ -216,9 +217,10 @@ class StockCodeHandler(QABaseHandler):
             self.write('wrong')
 
 
-class FutureHandler(QABaseHandler):
+class FutureCodeHandler(QABaseHandler):
     def get(self):
-        pass
+        mp = MARKET_PRESET()
+        return QA_util_to_json_from_pandas(mp.pdtable.T)
 
 
 class CurrentListHandler(QABaseHandler):
