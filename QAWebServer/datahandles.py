@@ -220,7 +220,7 @@ class StockCodeHandler(QABaseHandler):
 class FutureCodeHandler(QABaseHandler):
     def get(self):
         mp = MARKET_PRESET()
-        return QA_util_to_json_from_pandas(mp.pdtable.T)
+        elf.write({'result': QA_util_to_json_from_pandas(mp.pdtable.T)})
 
 
 class CurrentListHandler(QABaseHandler):
