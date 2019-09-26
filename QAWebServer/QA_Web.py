@@ -39,7 +39,8 @@ from QAWebServer.commandhandler import (CommandHandler, CommandHandlerWS,
                                         RunnerHandler)
 from QAWebServer.datahandles import (DataFetcher, StockBlockHandler, CurrentListHandler,
                                      StockCodeHandler, StockdayHandler,
-                                     StockminHandler, StockPriceHandler)
+                                     StockminHandler, StockPriceHandler,
+                                     FutureCodeHandler)
 from QAWebServer.filehandler import FileHandler
 from QAWebServer.jobhandler import FileRunHandler, JOBHandler
 from QAWebServer.quotationhandles import (MonitorSocketHandler,
@@ -73,7 +74,9 @@ handlers = [
     (r"/",
      INDEX),
     (r"/codelist",
-    CurrentListHandler),
+     CurrentListHandler),
+    (r"/marketdata/future/code",
+     FutureCodeHandler),
     (r"/marketdata/stock/day",
      StockdayHandler),
     (r"/marketdata/stock/min",
@@ -148,7 +151,6 @@ def main():
         compress_response=True
     )
     port = options.port
-
 
     http_server = Server(apps)
     print('========WELCOME QUANTAXIS_WEBSERVER============')
