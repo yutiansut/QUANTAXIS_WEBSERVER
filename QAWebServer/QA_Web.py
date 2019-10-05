@@ -144,20 +144,25 @@ def main():
     define("content", default=[], type=str, multiple=True, help="控制台输出内容")
 
     parse_command_line()
+    port = options.port
+    address = options.address
+
+    start_server(handlers, address, port)
+
+
+def start_server(handlers, address, port):
     apps = Application(
         handlers=handlers,
         debug=True,
         autoreload=True,
         compress_response=True
     )
-    port = options.port
-
     http_server = Server(apps)
     print('========WELCOME QUANTAXIS_WEBSERVER============')
     print('QUANTAXIS VERSION: {}'.format(__version__))
     print('QUANTAXIS WEBSERVER is Listening on: http://localhost:{}'.format(port))
     print('请打开浏览器/使用JavaScript等来使用该后台, 并且不要关闭当前命令行窗口')
-    http_server.bind(port=options.port, address=options.address)
+    http_server.bind(port=port, address=address)
     """增加了对于非windows下的机器多进程的支持
     """
     http_server.start(1)

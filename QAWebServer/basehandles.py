@@ -105,7 +105,7 @@ class QAWebSocketHandler(WebSocketHandler):
                         "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,HTTP2-Settings")
         self.set_header('Server', 'QUANTAXISBACKEND')
 
-    def open(self):
+    def open(self,  *args, **kwargs):
         self.write_message('x')
 
 
