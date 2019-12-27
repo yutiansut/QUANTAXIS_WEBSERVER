@@ -382,6 +382,40 @@ class index_realtime(QABaseHandler):
         self.write(x)
 
 
+
+class price_realtime(QABaseHandler):
+    """此函数专门为macbookpro 带Bar用户准备
+
+    传入code/market  即可获得实时报价
+
+    如果啥也不传入, 则给一些常见的code/market组合
+    
+    Arguments:
+        QABaseHandler {[type]} -- [description]
+
+    Return:
+        {'code': '000001, 'price': '20.1', 'market': 'stock_cn'}
+    """
+
+    def get(self):
+        code = self.get_argument('code', '000001')
+        market = self.get_argument('market', 'None')
+
+        if market == 'stock_cn':
+            data = QA.QA_fetch_get_stock_realtime('tdx', code)
+            return {'code': code, 'market': market, 'price': data.price.values[0]}
+
+        elif market == 'future_cn':
+            data = QA.QA_fetch_get_future_realtime('tdx', code.upper())
+            return {'code': code, 'market': market, 'price': data.price.values[0]}
+        elif market == 'index_cn':
+            data = QA.QA_fetch_get_index_realtime('tdx', code)
+            return {'code': code, 'market': market, 'price': data.price.values[0]}
+        elif market == 'bond_cn':
+            data = QA.QA_fetch_get_index_realtime('tdx', code)
+            return {'code': code, 'market': market, 'price': data.price.values[0]}
+
+
 if __name__ == '__main__':
     app = Application(
         handlers=[
