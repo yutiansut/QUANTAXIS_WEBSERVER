@@ -34,6 +34,7 @@ from tornado_http2.server import Server
 
 from QAWebServer.arphandles import (AccountHandler, PortfolioHandler,
                                     RiskHandler)
+from QAWebServer.apphandler import AppHandler
 from QAWebServer.basehandles import QABaseHandler
 from QAWebServer.commandhandler import (CommandHandler, CommandHandlerWS,
                                         RunnerHandler)
@@ -73,6 +74,8 @@ class INDEX(QABaseHandler):
 handlers = [
     (r"/",
      INDEX),
+    (r"/app/market",
+    AppHandler),
     (r"/codelist",
      CurrentListHandler),
     (r"/marketdata/future/code",

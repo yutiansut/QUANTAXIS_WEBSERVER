@@ -403,17 +403,13 @@ class price_realtime(QABaseHandler):
 
         if market == 'stock_cn':
             data = QA.QA_fetch_get_stock_realtime('tdx', code)
-            return {'code': code, 'market': market, 'price': data.price.values[0]}
-
         elif market == 'future_cn':
             data = QA.QA_fetch_get_future_realtime('tdx', code.upper())
-            return {'code': code, 'market': market, 'price': data.price.values[0]}
         elif market == 'index_cn':
             data = QA.QA_fetch_get_index_realtime('tdx', code)
-            return {'code': code, 'market': market, 'price': data.price.values[0]}
         elif market == 'bond_cn':
             data = QA.QA_fetch_get_index_realtime('tdx', code)
-            return {'code': code, 'market': market, 'price': data.price.values[0]}
+        self.write({'code': code, 'market': market, 'price': data.price.values[0]})
 
 
 if __name__ == '__main__':
