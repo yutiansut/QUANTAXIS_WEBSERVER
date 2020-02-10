@@ -28,12 +28,12 @@ class AppHandler(QABaseHandler):
         action =  self.get_argument('action')
 
         """
-        /app/market?action=recomentMarket
+        /app/market?action=recommentMarket
 
         /app/market?action=marketlist&
         """
 
-        if action == 'recomentMarket':
+        if action == 'recommentMarket':
             """首页3个推荐位
             一般来说是指数/期货
 
@@ -111,14 +111,14 @@ class AppHandler(QABaseHandler):
 
             """
             lists = {'000001': '上证指数', '000030': '沪深300', '000016': '上证50'}
-            print(lists)
+            #print(lists)
             data = pd.concat([QA.QA_fetch_get_index_day('tdx', code, QA.QA_util_get_real_date(datetime.date.today()), QA.QA_util_get_real_date(datetime.date.today())) for code in lists.keys()])
             data = data.assign(volume= data.vol, symbol= data.code, name= data.code.apply(lambda x: lists[x]), change=((data.close/data.open -1)*100).apply(lambda x: round(x,2)))
 
-            print(data)
+            #print(data)
             self.write({"result": QA.QA_util_to_json_from_pandas(data)})
 
-        elif action == 'marketlist':
+        elif action == 'marketlist':#
             """					
             "symbol": "RB1910",
             "name": "螺纹1910",
@@ -128,15 +128,21 @@ class AppHandler(QABaseHandler):
             "volume": 132412,
             "amount": 7223022.64800000,
             "change": 5.93
+
+
+
+            realtime quotation 从QAREALTIME 库中拿到
             """
             codelist =  QA.QA_fetch_future_list()
             codelist = codelist[codelist.code.apply(lambda x: x.endswith('L8'))]
 
             lists =  codelist.set_index('code').name.to_dict()
-
-            data = pd.concat([QA.QA_fetch_get_future_day('tdx', code, QA.QA_util_get_real_date(datetime.date.today()), QA.QA_util_get_real_date(datetime.date.today())) for code in lists.keys()])
+            
+            #data = pd.concat([QA.QA_fetch_get_future_day('tdx', code, QA.QA_util_get_real_date(datetime.date.today()), QA.QA_util_get_real_date(datetime.date.today())) for code in lists.keys()])
             
             
             data = data.assign(symbol= data.code, name= data.code.apply(lambda x: lists[x]), change=( data.close/data.open -1)*100)
 
             self.write({"result": QA.QA_util_to_json_from_pandas(data)})
+
+        
