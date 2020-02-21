@@ -134,7 +134,7 @@ class future_realtime(QABaseHandler):
 
         """
 
-        symbol = self.get_argument('symbol', 'RB1910')
+        symbol = self.get_argument('symbol', 'RB2005')
         frequence = self.get_argument('range', '5min')
 
         if frequence == '86400000':
@@ -159,12 +159,22 @@ class future_realtime(QABaseHandler):
             start = '2019-06-01'
         end = QA.QAUtil.QADate.QA_util_stamp2datetime(
             int(self.get_argument('prevTradeTime')))
-        res = QA.QA_quotation(symbol, start, end, frequence, 'future_cn',
-                              source=QA.DATASOURCE.MONGO, output=QA.OUTPUT_FORMAT.DATASTRUCT)
-        x1 = res.data.reset_index()
+        if frequence != 'week':
+            res = QA.QA_quotation(symbol, start, end, frequence, 'future_cn',
+                                source=QA.DATASOURCE.MONGO, output=QA.OUTPUT_FORMAT.DATASTRUCT)
+            x1 = res.data.reset_index()
+        else:
+            res = QA.QA_quotation(symbol, start, end, 'day', 'future_cn',
+                    source=QA.DATASOURCE.MONGO, output=QA.OUTPUT_FORMAT.DATASTRUCT)
 
+            x1 = QA.QA_data_day_resample(res.data.assign(amount= res.position), 'w').reset_index()
+
+            
         quote = QA.QA_fetch_get_future_realtime('tdx', symbol)
-        x1['datetime'] = pd.to_datetime(x1['datetime'])
+        if frequence in ['day', 'week']:
+            x1['datetime'] = pd.to_datetime(x1['date'])
+        else:
+            x1['datetime'] = pd.to_datetime(x1['datetime'])
         x = {
             "success": True,
             "data": {
@@ -237,16 +247,26 @@ class stock_realtime(QABaseHandler):
             int(self.get_argument('prevTradeTime'))))[0:19]
 
         #res = QA.QA_quotation(symbol, start, end, frequence, 'stock_cn','mongo', output=QA.OUTPUT_FORMAT.DATASTRUCT)
-        res = QA.QA_fetch_get_stock_min('tdx', symbol, start, end, frequence)
+        if frequence in ['day', 'week']:
+            res = QA.QA_fetch_stock_day_adv(symbol, start, end, frequence)
+            if frequence == 'week':
+                x1 = res.week.reset_index()
+            else:
+                x1 = res.data.reset_index()
+            
+            x1['datetime'] = pd.to_datetime(x1['date'])
+        else:
+            res = QA.QA_fetch_stock_min_adv(symbol, start, end, frequence)
+            x1 = res.data.reset_index()
+            x1['datetime'] = pd.to_datetime(x1['datetime'])
 
-        x1 = res
 
         quote = QA.QA_fetch_get_stock_realtime('tdx', symbol)
-        x1['datetime'] = pd.to_datetime(x1['datetime'])
+
         x = {
             "success": True,
             "data": {
-                "lines": pd.concat([x1.datetime.apply(lambda x: float(x.tz_localize('Asia/Shanghai').value/1000000)), x1.open, x1.high, x1.low, x1.close, x1.vol], axis=1).to_numpy().tolist(),
+                "lines": pd.concat([x1.datetime.apply(lambda x: float(x.tz_localize('Asia/Shanghai').value/1000000)), x1.open, x1.high, x1.low, x1.close, x1.volume], axis=1).to_numpy().tolist(),
                 "trades": [
                     {
                         "amount": float(quote['cur_vol'].values[0]),
