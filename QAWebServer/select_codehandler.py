@@ -15,6 +15,7 @@ class SelectCodehandler(QABaseHandler):
 
 
     """
+    stocklist= QA.QA_fetch_stock_list_adv()
     def get(self):
         c = QA.DATABASE.selectedCode
         req = self.get_argument('action')
@@ -27,7 +28,9 @@ class SelectCodehandler(QABaseHandler):
 
             #{"result": {"topic": "x1", "name": "\u9009\u80a1\u6d4b\u8bd5", "date": "2020-04-24", "market": "stock_cn", "codelist": ["000001", "000016", "600000"]}}
             rt = self.get_argument('topic')
-            self.write({'result': c.find_one({'topic':rt}, {'_id':0})})
+            codelist =  c.find_one({'topic':rt}, {'_id':0})
+            codelist['codelist'] = QA.QA_util_to_json_from_pandas(QA.QA_fetch_stock_list_adv().loc[['000001', '000002']].loc[: , ['code','name']])
+            self.write({'result': codelist})
         
         elif req == 'get_selectindex':
             # http://localhost:8022/selected?action=get_selectindex&topic=x1
