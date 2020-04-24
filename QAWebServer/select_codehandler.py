@@ -20,7 +20,7 @@ class SelectCodehandler(QABaseHandler):
         req = self.get_argument('action')
         if req == 'get_list':
             # http://localhost:8022/selected?action=get_list
-            self.write({'result': [i['topic'] for i in c.find({}, {'_id':0})]})
+            self.write({'result': [i for i in c.find({}, {'_id':0, 'topic': 1, 'name': 1})]})
         
         elif req == 'get_selected':
             # http://localhost:8022/selected?action=get_selected&topic=x1
