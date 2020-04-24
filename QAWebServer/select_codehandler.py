@@ -21,7 +21,9 @@ class SelectCodehandler(QABaseHandler):
         req = self.get_argument('action')
         if req == 'get_list':
             # http://localhost:8022/selected?action=get_list
-            self.write({'result': [i for i in c.find({}, {'_id':0, 'topic': 1, 'name': 1})]})
+            u =  [i for i in c.find({}, {'_id':0, 'topic': 1, 'name': 1})]
+            
+            self.write({'result': dict(zip([i['topic'] for i in u ], [i['name'] for i in u]))})
         
         elif req == 'get_selected':
             # http://localhost:8022/selected?action=get_selected&topic=x1
@@ -29,8 +31,9 @@ class SelectCodehandler(QABaseHandler):
             #{"result": {"topic": "x1", "name": "\u9009\u80a1\u6d4b\u8bd5", "date": "2020-04-24", "market": "stock_cn", "codelist": ["000001", "000016", "600000"]}}
             rt = self.get_argument('topic')
             codelist =  c.find_one({'topic':rt}, {'_id':0})
-            codelist['codelist'] = QA.QA_util_to_json_from_pandas(QA.QA_fetch_stock_list_adv().loc[['000001', '000002']].loc[: , ['code','name']])
-            self.write({'result': codelist})
+            if codelist:
+              codelist['codelist'] = QA.QA_util_to_json_from_pandas(QA.QA_fetch_stock_list_adv().loc[codelist['codelist']].loc[: , ['code','name']])
+              self.write({'result': codelist})
         
         elif req == 'get_selectindex':
             # http://localhost:8022/selected?action=get_selectindex&topic=x1
@@ -57,7 +60,7 @@ class SelectCodehandler(QABaseHandler):
                 block = QA.QAAnalysis_block(codelist['codelist'], start = start, end= end)
                 ind = block.block_index()
                 
-                x = QA.QA_util_to_json_from_pandas(ind.reset_index())
+                x = QA.QA_util_to_json_from_pandas(ind.reset_index().dropna())
                 
                 self.write({'result': x})
         
