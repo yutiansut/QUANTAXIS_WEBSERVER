@@ -249,6 +249,7 @@ class stock_realtime(QABaseHandler):
         #res = QA.QA_quotation(symbol, start, end, frequence, 'stock_cn','mongo', output=QA.OUTPUT_FORMAT.DATASTRUCT)
         if frequence in ['day', 'week']:
             res = QA.QA_fetch_stock_day_adv(symbol, start, end, frequence)
+            print(res.week)
             if frequence == 'week':
                 x1 = res.week.reset_index()
             else:

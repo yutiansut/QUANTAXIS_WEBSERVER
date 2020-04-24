@@ -44,6 +44,7 @@ from QAWebServer.datahandles import (DataFetcher, StockBlockHandler, CurrentList
                                      FutureCodeHandler)
 from QAWebServer.filehandler import FileHandler
 from QAWebServer.jobhandler import FileRunHandler, JOBHandler
+from QAWebServer.select_codehandler import SelectCodehandler
 from QAWebServer.quotationhandles import (MonitorSocketHandler,
                                           RealtimeSocketHandler,
                                           SimulateSocketHandler,
@@ -102,6 +103,8 @@ handlers = [
      PortfolioHandler),
     (r"/account",
      AccountHandler),
+    (r"/selected",
+    SelectCodehandler),
     (r"/user/blocksetting",
      PersonBlockHandler),
     (r"/strategy/content",
