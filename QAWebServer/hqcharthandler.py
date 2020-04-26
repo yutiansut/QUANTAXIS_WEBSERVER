@@ -125,7 +125,7 @@ class HqKline():
         self.symbol = code
 
         self.start = start
-        self.end = self.end
+        self.end = end
         
 
     @property
@@ -137,7 +137,7 @@ class HqKline():
 
     def to_json(self):
         return {
-            "data": self.data.assign(date=self.data.date.apply(lambda x: QA.QA_util_date_str2int(str(x)[0:10])), yclose=self.data.close.shift()).loc[:, ['date', 'yclose', 'open', 'high', 'low', 'close', 'volume', 'amount']].values.tolist(),
+            "data": self.data.assign(date=self.data.date.apply(lambda x: QA.QA_util_date_str2int(str(x)[0:10])), yclose=self.data.close.shift().bfill()).loc[:, ['date', 'yclose', 'open', 'high', 'low', 'close', 'volume', 'amount']].values.tolist(),
             "symbol": self.symbol,  # 股票代码
             "name": "浦发银行",  # 股票名称
             "start": 4837,  # 返回数据的起始位置 （暂时不用， 分页下载历史数据使用，下载都是一次请求完)
@@ -147,7 +147,7 @@ class HqKline():
             "version": "2.0",
             "message": '',
             "code": 0,
-            "servertime": str(datetime.date.now())}
+            "servertime": str(datetime.datetime.now())}
 
 
 class QAHqchartDailyHandler(QABaseHandler):
