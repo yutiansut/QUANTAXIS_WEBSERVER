@@ -47,10 +47,37 @@ class HqTrendSlice():
         self.vol = 0
         self.amount = 0
         self.time = 0
-	
+        self.code = ''
+        self.close = 0
+
     @property
     def avgprice(self):
-        return 
+        return 0
+    @property
+    def increase(self):
+        return 0
+    @property
+    def risefall(self):
+        return 0
+
+
+
+    def to_json(self):
+        return {
+          'price': self.price,
+          'open': self.open,
+          'high': self.high, 
+          'low': self.low, 
+          'vol': self.vol,
+          'amount': self.amount,
+          'time': self.time,
+          'avgprice': self.avgprice,
+          'increase': self.increase,
+          'risefall': self.risefall,
+          'code': self.code,
+          'close': self.close
+
+        }
 
 
 class HqTrend():
@@ -63,11 +90,39 @@ class HqTrend():
         self.open = ''
         self.yclose = ''
 
+        self.amount = 0
+        self.vol = 0
+        self.low = 0
+        self.high = 0
+        self.minutecount = 0
+        self.minute = []
+
+    def recv(self):
+        self.minute.append(HqTrendSlice().to_json())
+
+    def to_json(self):
+        return {
+            'name': self.name,
+            'symbol': self.symbol,
+            'time': self.time,
+            'date': self.date,
+            'price': self.price,
+            'open': self.open,
+            'yclose': self.yclose,
+            'amount': self.amount,
+            'vol': self.vol,
+            'low': self.low,
+            'high': self.high,
+            'minutecount': self.minutecount,
+            'minute': self.minute}
 
 
 class QAHqchartHandler(QABaseHandler):
     def get(self):
-        self.write()
+
+        t = HqTrend()
+        t.recv()
+        self.write({'result': t.to_json()})
 
 
 if __name__ == "__main__":
@@ -81,5 +136,5 @@ if __name__ == "__main__":
         ],
         debug=True
     )
-    app.listen(8021)
+    app.listen(8029)
     tornado.ioloop.IOLoop.current().start()
