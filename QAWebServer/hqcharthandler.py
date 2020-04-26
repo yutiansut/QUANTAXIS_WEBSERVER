@@ -85,7 +85,7 @@ class HqTrendSlice():
 
 class HqTrend():
     def __init__(self, ):
-        self.symbol = ''
+        self.symbol = '000001'
         self.time = ''
         self.date = ''
         self.price = ''
