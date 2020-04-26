@@ -121,21 +121,28 @@ class HqTrend():
 
 
 class HqKline():
-    def __init__(self,code, start, end):
+    def __init__(self, code, start, end, frequence, market):
         self.symbol = code
 
         self.start = start
         self.end = end
-        
+        self.frequence = frequence
+        self.market = market
 
     @property
     def data(self):
-        return QA.QA_fetch_stock_day(self.symbol[0:6], self.start, self.end, 'pd')
+
+        data = QA.QA_quotation(self.symbol, self.start, self.end, self.frequence, self.market, source=QA.DATASOURCE.MONGO, output=QA.OUTPUT_FORMAT.DATASTRUCT).data.reset_index()
+        if self.frequence != 'day':
+            data = data.assign(date= data.datetime.apply(lambda x: str(x)[0:10]))
+        return data
+        # return QA.QA_fetch_stock_day(self.symbol[0:6], self.start, self.end, 'pd')
 
     def klineformat(self):
         return []
 
     def to_json(self):
+
         return {
             "data": self.data.assign(date=self.data.date.apply(lambda x: QA.QA_util_date_str2int(str(x)[0:10])), yclose=self.data.close.shift().bfill()).loc[:, ['date', 'yclose', 'open', 'high', 'low', 'close', 'volume', 'amount']].values.tolist(),
             "symbol": self.symbol,  # 股票代码
@@ -160,10 +167,16 @@ class QAHqchartDailyHandler(QABaseHandler):
 
 class QAHqchartKlineHandler(QABaseHandler):
     def get(self):
+        code = self.get_argument('code', '600000.sh')
+        start = self.get_argument('start', '2019-01-01')
+        end = self.get_argument('end', default='2020-01-01')
+        frequence = self.get_argument('frequence', 'day')
+        market = self.get_argument('maket', 'stock_cn')
 
-        t = HqKline('600000.sh', '2019-01-01', '2020-01-01')
-        #t#.recv()
+        t = HqKline(code, start, end, frequence, market)
+        # t#.recv()
         self.write({'result': t.to_json()})
+
 
 if __name__ == "__main__":
     import tornado
