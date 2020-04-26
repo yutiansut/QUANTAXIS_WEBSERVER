@@ -40,7 +40,7 @@ import QUANTAXIS as QA
 import pandas as pd
 import datetime
 
-
+stocklist =  QA.QA_fetch_stock_list_adv()
 class HqTrendSlice():
     def __init__(self):
         self.price = 0
@@ -85,7 +85,6 @@ class HqTrendSlice():
 
 class HqTrend():
     def __init__(self, ):
-        self.name = ''
         self.symbol = ''
         self.time = ''
         self.date = ''
@@ -105,7 +104,7 @@ class HqTrend():
 
     def to_json(self):
         return {
-            'name': self.name,
+            'name': stocklist.loc[self.symbol[0:6]]['name'],
             'symbol': self.symbol,
             'time': self.time,
             'date': self.date,
@@ -146,7 +145,7 @@ class HqKline():
         return {
             "data": self.data.assign(date=self.data.date.apply(lambda x: QA.QA_util_date_str2int(str(x)[0:10])), yclose=self.data.close.shift().bfill()).loc[:, ['date', 'yclose', 'open', 'high', 'low', 'close', 'volume', 'amount']].values.tolist(),
             "symbol": self.symbol,  # 股票代码
-            "name": "浦发银行",  # 股票名称
+            "name": stocklist.loc[self.symbol[0:6]]['name'],  # 股票名称
             "start": 4837,  # 返回数据的起始位置 （暂时不用， 分页下载历史数据使用，下载都是一次请求完)
             "end": 3838,  # 返回数据的结束位置（暂时不用， 分页下载历史数据使用，下载都是一次请求完)
             "count": 4838,  # 需要的K线数据个数 ， 单位是天
