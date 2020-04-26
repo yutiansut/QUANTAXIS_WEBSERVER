@@ -129,11 +129,25 @@ class HqKline():
         self.market = market
 
     @property
+    def name(self):
+      try:
+          if self.market == 'stock_cn':
+            return stocklist.loc[self.symbol[0:6]]['name']
+          else:
+            return self.symbol
+      except:
+          return ''
+
+
+    @property
     def data(self):
 
         data = QA.QA_quotation(self.symbol, self.start, self.end, self.frequence, self.market, source=QA.DATASOURCE.MONGO, output=QA.OUTPUT_FORMAT.DATASTRUCT).data.reset_index()
+        print(data)
         if self.frequence != 'day':
             data = data.assign(date= data.datetime.apply(lambda x: str(x)[0:10]))
+        if self.market != 'stock_cn': 
+            data =  data.assign(amount = data.volume * data.close)
         return data
         # return QA.QA_fetch_stock_day(self.symbol[0:6], self.start, self.end, 'pd')
 
@@ -145,7 +159,7 @@ class HqKline():
         return {
             "data": self.data.assign(date=self.data.date.apply(lambda x: QA.QA_util_date_str2int(str(x)[0:10])), yclose=self.data.close.shift().bfill()).loc[:, ['date', 'yclose', 'open', 'high', 'low', 'close', 'volume', 'amount']].values.tolist(),
             "symbol": self.symbol,  # 股票代码
-            "name": stocklist.loc[self.symbol[0:6]]['name'],  # 股票名称
+            "name": self.name,  # 股票名称
             "start": 4837,  # 返回数据的起始位置 （暂时不用， 分页下载历史数据使用，下载都是一次请求完)
             "end": 3838,  # 返回数据的结束位置（暂时不用， 分页下载历史数据使用，下载都是一次请求完)
             "count": 4838,  # 需要的K线数据个数 ， 单位是天
@@ -170,7 +184,7 @@ class QAHqchartKlineHandler(QABaseHandler):
         start = self.get_argument('start', '2019-01-01')
         end = self.get_argument('end', default='2020-01-01')
         frequence = self.get_argument('frequence', 'day')
-        market = self.get_argument('maket', 'stock_cn')
+        market = self.get_argument('market', 'stock_cn')
 
         t = HqKline(code, start, end, frequence, market)
         # t#.recv()
