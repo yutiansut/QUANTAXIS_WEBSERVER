@@ -1,6 +1,6 @@
 import os
 import uuid
-
+import requests
 from QAWebServer.basehandles import QABaseHandler
 from QUANTAXIS.QASetting.QALocalize import cache_path
 from QUANTAXIS.QAUtil.QAParameter import RUNNING_STATUS
