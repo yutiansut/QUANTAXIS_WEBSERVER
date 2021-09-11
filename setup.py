@@ -41,8 +41,8 @@ setup(
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
     ],
-    install_requires=['quantaxis_run>=1.5', 'tornado>=6.1',
-                      'quantaxis>=1.7.0', 'tornado_http2'],
+    install_requires=['tornado>=6.1', 'qaenv', 'apscheduler',
+                      'quantaxis>=1.7.0'],
     entry_points={
         'console_scripts': [
             'quantaxis_webserver=QAWebServer.QA_Web:main'

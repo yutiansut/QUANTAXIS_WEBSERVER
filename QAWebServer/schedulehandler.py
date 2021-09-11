@@ -4,21 +4,17 @@ from tornado.web import RequestHandler, Application
 from apscheduler.schedulers.tornado import TornadoScheduler
 import threading
 from QAWebServer.basehandles import QABaseHandler
-
+from qaenv import mongo_ip, mongo_port
 from apscheduler.jobstores.mongodb import MongoDBJobStore
+import pymongo
 """
 增加 mongodb 的数据读取
-
-
-
-
-
 
 """
 scheduler = None
 job_ids = []
 jobstores = {
-    'default': MongoDBJobStore(database='qascheduler', collection='jobs')
+    'default': MongoDBJobStore(database='qascheduler', collection='jobs', client=pymongo.MongoClient(host=mongo_ip, port=mongo_port))
 }
 # 初始化
 
