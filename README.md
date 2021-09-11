@@ -4,6 +4,15 @@ quantaxis_webserver
 
 QUANTAXIS的后端基类 BASE ON TORNADO
 
+```
+current version: 2.0
+
+
+2.0 支持了 tornado 6.1, 方便兼容 jupyterlab 3
+
+2.0是一个不兼容更新, 删除了 1.x 的诸多 handlers, 如需使用之前的版本, 请指定版本安装 pip install quantaxis_webserver<2
+```
+
 
 -- support tornado 6.1
 
