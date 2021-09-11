@@ -44,7 +44,7 @@ from QAWebServer.userhandles import (PersonBlockHandler, SigninHandler,
                                      SignupHandler, UserHandler)
 from QUANTAXIS import __version__
 from QUANTAXIS.QAUtil.QASetting import QASETTING
-from QAWebServer.schedulehandler import init_scheduler, QASchedulerHandler
+from QAWebServer.schedulehandler import init_scheduler, QASchedulerHandler, QAScheduleQuery
 
 
 class INDEX(QABaseHandler):
@@ -77,7 +77,8 @@ handlers = [
      CommandHandlerWS),
     (r"/command/runbacktest",
      RunnerHandler),
-    (r"/scheduler/?", QASchedulerHandler),
+    (r"/scheduler/map/?", QASchedulerHandler),
+    (r"/scheduler/query", QAScheduleQuery),
     (r"/file",
      FileHandler),
 ]

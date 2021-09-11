@@ -5,7 +5,7 @@ from apscheduler.schedulers.tornado import TornadoScheduler
 import threading
 from QAWebServer.basehandles import QABaseHandler
 
-
+from apscheduler.jobstores.mongodb import MongoDBJobStore
 """
 增加 mongodb 的数据读取
 
@@ -17,13 +17,15 @@ from QAWebServer.basehandles import QABaseHandler
 """
 scheduler = None
 job_ids = []
-
+jobstores = {
+    'default': MongoDBJobStore(database='qascheduler', collection='jobs')
+}
 # 初始化
 
 
 def init_scheduler():
     global scheduler
-    scheduler = TornadoScheduler()
+    scheduler = TornadoScheduler(jobstores=jobstores)
     scheduler.start()
     print('[QAScheduler Init]APScheduler has been started')
 
@@ -31,17 +33,15 @@ def init_scheduler():
 
 
 def task1(options):
-    print('{} [APScheduler][Task]-{}'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'), options))
-    print(threading.enumerate())
-
-
-class MainHandler(QABaseHandler):
-    def get(self):
-        self.write(
-            '<a href="/scheduler?job_id=1&action=add">add job</a><br><a href="/scheduler?job_id=1&action=remove">remove job</a>')
+    print('{} [QASchedule][Task]-{}'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'), options))
+    # print(threading.enumerate())
 
 
 class QASchedulerHandler(QABaseHandler):
+    """
+    http://0.0.0.0:8010/scheduler?job_id=1&action=add
+    """
+
     def get(self):
         global job_ids
         job_id = self.get_query_argument('job_id', None)
@@ -68,12 +68,22 @@ class QASchedulerHandler(QABaseHandler):
             self.write('[INVALID PARAMS] INVALID job_id or action')
 
 
-# if __name__ == "__main__":
-#     routes = [
-#         # (r"/", QAMainHandler),
-#         (r"/scheduler/?", QASchedulerHandler),
-#     ]
-#     init_scheduler()
-#     app = Application(routes, debug=True)
-#     app.listen(8888)
-#     IOLoop.current().start()
+def format_joboutput(job):
+    return {
+        'id': job.id,
+        'name': job.name,
+        'args': job.args,
+        'kwards': job.kwargs,
+        'coalesce': job.coalesce,
+        'nextruntime': str(job.next_run_time)
+    }
+
+
+class QAScheduleQuery(QABaseHandler):
+    def get(self):
+        action = self.get_argument('action', None)
+        print(action)
+        if action == 'queryall':
+            jobs = scheduler.get_jobs()
+            print([format_joboutput(x) for x in jobs])
+            self.write({'res': [format_joboutput(x) for x in jobs]})
