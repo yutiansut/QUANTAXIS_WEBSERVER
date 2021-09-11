@@ -32,7 +32,7 @@ LICENSE = "MIT"
 
 setup(
     name=NAME,
-    version='1.8.2',
+    version='2.0.0',
     description=DESCRIPTION,
     long_description='quantaxis webserver',
     classifiers=[
@@ -41,12 +41,11 @@ setup(
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
     ],
-    install_requires=['quantaxis_run>=1.5', 'tornado==5.1.1',
+    install_requires=['quantaxis_run>=1.5', 'tornado>=6.1',
                       'quantaxis>=1.7.0', 'tornado_http2'],
     entry_points={
         'console_scripts': [
-            'quantaxis_webserver=QAWebServer.QA_Web:main',
-            'quantaxis_webservice=QAWebServer.windowsservice:servicemain'
+            'quantaxis_webserver=QAWebServer.QA_Web:main'
         ]
     },
     # install_requires=requirements,
